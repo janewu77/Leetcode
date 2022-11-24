@@ -117,9 +117,11 @@ public class N15M3Sum {
     //Runtime: 47 ms, faster than 35.83% of Java online submissions for 3Sum.
     //Memory Usage: 60.1 MB, less than 32.20% of Java online submissions for 3Sum.
     //Two pointers
-    //Time: O(N * LogN + N * N); Space : O(LogN)
+    //Time: O(N * LogN + N * N); Space : O(N + LogN)
     public List<List<Integer>> threeSum_4(int[] nums) {
         Set<List<Integer>> resultSet = new HashSet();
+
+        //Space:O(LogN)
         Arrays.sort(nums);
 
         for(int i = 0; i <= nums.length - 3 && nums[i] <= 0;){
@@ -151,9 +153,11 @@ public class N15M3Sum {
     //Runtime: 99 ms, faster than 29.77% of Java online submissions for 3Sum.
     //Memory Usage: 60.2 MB, less than 31.74% of Java online submissions for 3Sum.
     //Binary Search
-    //Time: O(N * logN + N * N * logN); Space:O(LogN)
+    //Time: O(N * logN + N * N * logN); Space:O(N + LogN)
     public List<List<Integer>> threeSum_3(int[] nums) {
         Set<List<Integer>> resultSet = new HashSet();
+
+        //Space:O(LogN)
         Arrays.sort(nums);
 
         for(int i = 0; i < nums.length - 2 && nums[i] <= 0;){
@@ -169,6 +173,7 @@ public class N15M3Sum {
             i++;
             while(i < nums.length - 2 && nums[i] == nums[i - 1]) i++;
         }
+
         return new ArrayList<>(resultSet);
     }
 
