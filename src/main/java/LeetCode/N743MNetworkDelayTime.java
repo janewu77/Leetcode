@@ -162,27 +162,29 @@ public class N743MNetworkDelayTime {
         int[] resList = new int[n + 1];
         Arrays.fill(resList, Integer.MAX_VALUE);
 
-        //minHeap
-        Queue<int[]> queue = new PriorityQueue<>((a, b) -> a[1] - b[1] != 0 ? a[1] - b[1] : a[0] - b[0]);
+        //minHeap:  node, distance
+        Queue<int[]> minHeap = new PriorityQueue<>((a, b) -> a[1] - b[1] != 0 ? a[1] - b[1] : a[0] - b[0]);
+        //k is the start node
         if (graph.containsKey(k)){
-            queue.add(new int[]{k, 0});
+            minHeap.add(new int[]{k, 0});
             resList[k] = 0;
         }
 
         //Time: O(E * logE)
         //Time: O(E * log(N * (N-1)))
         //Time: O(E * log(N)
-        while (graph.size() > 0 && !queue.isEmpty()) {
-            int[] node = queue.poll();
+        while (graph.size() > 0 && !minHeap.isEmpty()) {
+            int[] node = minHeap.poll();
+            //node[1] : distance
             if (!graph.containsKey(node[0])) continue;
 
             for (int[] neighbour : graph.get(node[0])) {
                 //update
                 if (resList[neighbour[1]] > node[1] + neighbour[2]) {
                     resList[neighbour[1]] = node[1] + neighbour[2];
-                    //log(E)
+                    //Time: O(log(E))
                     if (graph.containsKey(neighbour[1]))
-                        queue.add(new int[]{neighbour[1], resList[neighbour[1]]});
+                        minHeap.add(new int[]{neighbour[1], resList[neighbour[1]]});
                 }
             }
             graph.remove(node[0]);
