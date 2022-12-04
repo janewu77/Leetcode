@@ -16,13 +16,11 @@ import static java.time.LocalTime.now;
 public class C0806 {
 
 
+
      static public void main(String... args) throws IOException{
          System.out.println(now());
          System.out.println("==================");
-//
-//        System.out.println(a);
-//        System.out.println(A);
-//        //doRun(0, 0);
+        //doRun(0, 0);
         System.out.println(now());
         System.out.println("==================");
     }
