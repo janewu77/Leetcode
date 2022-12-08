@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 public class DemoString {
 
     public static void main(String[] args) throws Exception{
+        String xx = "𝄞";
+        System.out.println(xx.length());
 
         String str1 = "abc";
         String str2 = "abc";
