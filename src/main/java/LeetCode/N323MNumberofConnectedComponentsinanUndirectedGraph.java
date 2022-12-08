@@ -29,17 +29,48 @@ package LeetCode;
  * There are no repeated edges.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * M - [time: 5-
  */
 //same as 547
 public class N323MNumberofConnectedComponentsinanUndirectedGraph {
 
+    //2.DFS
+    //5 ms, 72.1%; Memory: 42.6 MB,90.71%
+    //Time: O(N + E + N); Space: O(E + N + N);
+    //Time: O(N + E); Space: O(E + N);
+    public int countComponents(int n, int[][] edges) {
+        List<Integer>[] graph = new List[n];
+        for (int i = 0; i < graph.length; i++)
+            graph[i] = new ArrayList<>();
+        for (int[] edge: edges) {
+            graph[edge[0]].add(edge[1]);
+            graph[edge[1]].add(edge[0]);
+        }
 
+        int res = 0;
+        boolean[] visited = new boolean[n];
+        for (int i = 0; i < n; i++){
+            if (visited[i]) continue;
+            helper_dfs(graph, visited, i);
+            res++;
+        }
+        return res;
+    }
+    private void helper_dfs(List<Integer>[] graph, boolean[] visited, int node){
+        if (visited[node]) return;
+        visited[node] = true;
+        for (Integer neighbour : graph[node]) helper_dfs(graph, visited, neighbour);
+    }
+
+    //1. Union find
     //Runtime: 4 ms, faster than 67.60% of Java online submissions for Number of Connected Components in an Undirected Graph.
     //Memory Usage: 46.7 MB, less than 51.00% of Java online submissions for Number of Connected Components in an Undirected Graph.
-    //union find /  Disjoint Set Union (DSU)
-    public int countComponents(int n, int[][] edges) {
+    //Time: O(N + E * log(N)); Space: O(N)
+    public int countComponents_1(int n, int[][] edges) {
         UnionFind uf = new UnionFind(n);
         for (int[] edge: edges) uf.union(edge[0], edge[1]);
         return uf.getCount();
