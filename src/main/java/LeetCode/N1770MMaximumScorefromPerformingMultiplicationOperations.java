@@ -92,6 +92,7 @@ public class N1770MMaximumScorefromPerformingMultiplicationOperations {
     }
 
 
+    //3.DP bottom-up 1D
     //Runtime: 18 ms, faster than 100.00% of Java online submissions for Maximum Score from Performing Multiplication Operations.
     //Memory Usage: 50 MB, less than 98.84% of Java online submissions for Maximum Score from Performing Multiplication Operations.
     //DP - 1d arrays
@@ -110,7 +111,7 @@ public class N1770MMaximumScorefromPerformingMultiplicationOperations {
         return dp[0];
     }
 
-
+    //2.DP bottom-up 2D
     //Runtime: 63 ms, faster than 84.53% of Java online submissions for Maximum Score from Performing Multiplication Operations.
     //Memory Usage: 103.7 MB, less than 73.60% of Java online submissions for Maximum Score from Performing Multiplication Operations.
     //Dynamic Programming DP - 2d arrays
@@ -130,31 +131,25 @@ public class N1770MMaximumScorefromPerformingMultiplicationOperations {
     }
 
 
-
-    //Runtime: 193 ms, faster than 56.09% of Java online submissions for Maximum Score from Performing Multiplication Operations.
-    //Memory Usage: 95.9 MB, less than 84.62% of Java online submissions for Maximum Score from Performing Multiplication Operations.
-    //recursion + memo
-    //Time: O(M + 2^M); Space: O(M * M)
-    //Time: O(2^M); Space: O(M * M)
+    //1. DP top-down
+    //Runtime: 24ms, 65.27%; Memory: 82.4MB, 42.49%;
+    //Time: O(M * M); Space: O(M * M)
     public int maximumScore_1(int[] nums, int[] multipliers) {
-        memo = new int[multipliers.length][multipliers.length];
+        int[][] memo = new int[multipliers.length][multipliers.length];
         for (int[] item : memo) Arrays.fill(item, Integer.MIN_VALUE);
-
-        return helper_recursion(nums, 0, multipliers, 0);
+        return helper_recursion(nums, 0, multipliers, 0, memo);
     }
 
-    int[][] memo;
-    private int helper_recursion(int[] nums, int begin, int[] multipliers, int idx){
+    private int helper_recursion(int[] nums, int begin, int[] multipliers, int idx, int[][] memo){
         if (idx == multipliers.length) return 0;
 
-        if (memo[idx][begin] != Integer.MIN_VALUE) return memo[idx][begin];
+        if (memo[idx][begin] != Integer.MIN_VALUE)
+            return memo[idx][begin];
 
         int end = nums.length - 1 - (idx - begin);
-        //if (begin > end) return 0;
-
         int res = Math.max(
-                nums[begin] * multipliers[idx] + helper_recursion(nums, begin + 1,  multipliers, idx + 1), //The start
-                nums[end] * multipliers[idx] + helper_recursion(nums, begin,  multipliers, idx + 1)); // The end
+                nums[begin] * multipliers[idx] + helper_recursion(nums, begin + 1,  multipliers, idx + 1, memo), //The start
+                nums[end] * multipliers[idx] + helper_recursion(nums, begin,  multipliers, idx + 1, memo)); // The end
 
         return memo[idx][begin] = res;
     }
