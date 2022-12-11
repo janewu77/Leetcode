@@ -35,6 +35,8 @@ public class C0806 {
 //        String res = comm.toString2(res1);
 //        System.out.println("["+(expect.equals(res))+"]expect:" + expect + " res:" + res);
 //        System.out.println("["+(expect == res)+"]expect:" + expect + " res:" + res);
+        //boolean success = Arrays.equals(res, expect);
+        //        System.out.println("["+success+"] expect:" + Arrays.toString(expect) + " res:" + Arrays.toString(res)));
     }
 
 }
