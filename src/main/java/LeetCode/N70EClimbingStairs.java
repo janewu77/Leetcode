@@ -56,9 +56,9 @@ public class N70EClimbingStairs {
         System.out.println("["+(expect == res)+"]expect:" + expect + " res:" + res);
     }
 
+    //5.Fibonacci Formula
     //Runtime: 0 ms, faster than 100.00% of Java online submissions for Climbing Stairs.
     //Memory Usage: 40.9 MB, less than 50.48% of Java online submissions for Climbing Stairs.
-    //Fibonacci Formula
     //Time: O(logn); Space: O(1)
     public int climbStairs(int n) {
         double sqrt5 = Math.sqrt(5);
@@ -68,9 +68,9 @@ public class N70EClimbingStairs {
         return (int) ((Math.pow(phi, n + 1) - Math.pow(psi, n + 1)) / sqrt5);
     }
 
+    //4.Matrix
     //Runtime: 1 ms, faster than 9.97% of Java online submissions for Climbing Stairs.
     //Memory Usage: 40.4 MB, less than 77.49% of Java online submissions for Climbing Stairs.
-    //Matrix
     // Time: O(logn); Space: O(1)
     public int climbStairs_Binets(int n) {
         int[][] q = {{1, 1}, {1, 0}};
@@ -98,10 +98,9 @@ public class N70EClimbingStairs {
         return c;
     }
 
-
+    //3.Fibonacci Number
     //Runtime: 0 ms, faster than 100.00% of Java online submissions for Climbing Stairs.
     //Memory Usage: 40.8 MB, less than 50.48% of Java online submissions for Climbing Stairs.
-    //Fibonacci Number
     //Time: O(N); Space: O(1)
     public int climbStairs_fn1(int n) {
         int d0 = 0, d1 = 1;
@@ -120,9 +119,9 @@ public class N70EClimbingStairs {
     }
 
 
+    //2. DP: bottom-up
     //Runtime: 0 ms, faster than 100.00% of Java online submissions for Climbing Stairs.
     //Memory Usage: 40.6 MB, less than 73.03% of Java online submissions for Climbing Stairs.
-    //DP: bottom-up
     //Time: O(N); Space: O(N)
     public int climbStairs_dp2(int n) {
         int[] dp = new int[n + 1];
@@ -133,6 +132,7 @@ public class N70EClimbingStairs {
         return dp[n];
     }
 
+    //1.DP top-down
     //Runtime: 0 ms, faster than 100.00% of Java online submissions for Climbing Stairs.
     //Memory Usage: 40.5 MB, less than 77.49% of Java online submissions for Climbing Stairs.
     //recursion
