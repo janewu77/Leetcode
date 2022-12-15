@@ -52,16 +52,57 @@ public class N1143MLongestCommonSubsequence {
         System.out.println("==================");
     }
 
-
     static private void doRun(int expect, String text1, String text2) {
         int res = new N1143MLongestCommonSubsequence().longestCommonSubsequence(text1, text2);
         System.out.println("["+(expect == res)+"]expect:" + expect + " res:" + res);
     }
 
-    //1.Recursion + memo
-    //Runtime: 44ms, 14.19%%; Memory: 46MB, 84.28%
-    //Time: O(M * N); Space: O(M * N)
+
+    //3.dp bottom-up + 1d array
+    //Runtime: 11ms, 97.47%; Memory: 40.1MB, 99.48%
+    //Time: O(M * N); Space: O(min(M,N))
     public int longestCommonSubsequence(String text1, String text2) {
+        if (text2.length() > text1.length()){
+            String tmp = text1;
+            text1 = text2;
+            text2 = tmp;
+        }
+
+        int[] dp = new int[text2.length() + 1];
+        for (int i = text1.length() - 1; i >= 0; i--) {
+            int lastValue = 0;
+            for (int j = text2.length() - 1; j >= 0 ; j--){
+                int tmp = dp[j];
+                dp[j] = Math.max(dp[j], dp[j + 1]);
+                if (text1.charAt(i) == text2.charAt(j)) {
+                    dp[j] = Math.max(dp[j], 1 + lastValue);
+                }
+                lastValue = tmp;
+            }
+        }
+        return dp[0];
+    }
+
+    //2.dp bottom-up
+    //Runtime: 12ms, 96.2%; Memory: 45.8MB, 91.65%
+    //Time: O(M * N); Space: O(M * N)
+    public int longestCommonSubsequence_2(String text1, String text2) {
+        int[][] dp = new int[text1.length() + 1][text2.length() + 1];
+
+        for (int i = text1.length() - 1; i >= 0; i--) {
+            for (int j = text2.length() - 1; j >= 0 ; j--){
+                dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+                if (text1.charAt(i) == text2.charAt(j))
+                    dp[i][j] = Math.max(dp[i][j], 1 + dp[i + 1][j + 1]);
+            }
+        }
+        return dp[0][0];
+    }
+
+    //1.Recursion + memo
+    //Runtime: 44ms, 14.19%; Memory: 46MB, 84.28%
+    //Time: O(M * N * N); Space: O(M * N)
+    public int longestCommonSubsequence_1(String text1, String text2) {
         return helper(text1, 0, text2, 0, new int[text1.length()][text2.length()]);
     }
 
@@ -70,7 +111,9 @@ public class N1143MLongestCommonSubsequence {
 
         if (memo[idx1][idx2] > 0) return memo[idx1][idx2];
 
-        int idx = text2.indexOf(text1.charAt(idx1), idx2);
+
+        int idx = text2.indexOf(text1.charAt(idx1), idx2);  //Time:O(N)
+
         int len = helper(text1, idx1 + 1, text2, idx2, memo);
         if (idx >= 0)
             len = Math.max(len, 1 + helper(text1, idx1 + 1, text2, idx + 1, memo));
