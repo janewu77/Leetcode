@@ -2,12 +2,6 @@ package LeetCode;
 
 
 
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * On a campus represented as a 2D grid, there are n workers and m bikes, with n <= m. Each worker and bike is a 2D coordinate on this grid.
  *
@@ -52,11 +46,11 @@ import java.util.Set;
 public class N1066MCampusBikesII {
 
 
-    //1.Backtracking + bitmask + memo
-    //Runtime: 2ms, 99.7%; Memory: 39.9MB 87.96%
-    //Time: O(N * 2^M); Space: O(N * 2^M)
+    //1.Backtracking + BitMasking + memo
+    //Runtime: 1ms, 100%; Memory: 39.7MB 91.67%
+    //Time: O(N * 2^M); Space: O(N + 2^M)
     public int assignBikes(int[][] workers, int[][] bikes) {
-        int x = (1 << (bikes.length + 1)) - 1;
+        int x = 1 << bikes.length;
         return helper_backtracking(workers, 0, bikes,  0, new int[x]);
     }
 
@@ -76,15 +70,13 @@ public class N1066MCampusBikesII {
             int[] bike = bikes[i];
             int distance = Math.abs(bike[0] - worker[0]) + Math.abs(bike[1] - worker[1]);
 
-            bikeBitMask = bikeBitMask | x;
-            distance += helper_backtracking(workers, workerIdx + 1, bikes, bikeBitMask, memo);
-            bikeBitMask = (bikeBitMask & (~x));
+            //backtracking
+            distance += helper_backtracking(workers, workerIdx + 1, bikes, bikeBitMask | x, memo);
 
             res = Math.min(res, distance);
         }
 
-        memo[bikeBitMask] = res;
-        return res;
+        return memo[bikeBitMask] = res;
     }
 
 }
