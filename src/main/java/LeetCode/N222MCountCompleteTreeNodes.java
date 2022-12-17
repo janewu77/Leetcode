@@ -54,8 +54,10 @@ public class N222MCountCompleteTreeNodes {
         }
         if (height == 0) return 1;
 
+        //only check the leaf level (from 0 to 2^h - 1).
         //Time: O(log(N) * d); Space:O(1)
-        int left = 1, right = (int)Math.pow(2, height) - 1;
+        int left = 1; //last level has at least one node, so let left begin with 1.
+        int right = (int)Math.pow(2, height) - 1;
         while (left <= right) {
             int mid = (left + right) / 2;
             if (helper_BinarySearch(mid, height, root)) left = mid + 1;
@@ -65,6 +67,7 @@ public class N222MCountCompleteTreeNodes {
     }
 
     //Time: O(d); Space:O(1)
+    //idx : the index of leaves in the last level.
     private boolean helper_BinarySearch(int idx, int d, TreeNode node) {
         int left = 0, right = (int)Math.pow(2, d) - 1;
         for (int i = 0; i < d; i++) {
@@ -120,8 +123,7 @@ public class N222MCountCompleteTreeNodes {
     }
 
     //1.BFS
-    //Runtime: 25 ms, faster than 5.20% of Java online submissions for Count Complete Tree Nodes.
-    //Memory Usage: 50.3 MB, less than 22.17% of Java online submissions for Count Complete Tree Nodes.
+    //Runtime: 6 ms, 7.86%; Memory: 45.2 MB, 85.87%
     //Time:O(N); Space: O(N)
     public int countNodes_1(TreeNode root) {
         if (root == null) return 0;
@@ -129,7 +131,7 @@ public class N222MCountCompleteTreeNodes {
         queue.add(root);
 
         int res = 0;
-        if (!queue.isEmpty()){
+        while (!queue.isEmpty()){
             TreeNode node  = queue.poll();
             res++;
             if (node.left != null) queue.add(node.left);

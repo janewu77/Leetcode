@@ -1,8 +1,6 @@
 package LeetCode;
 
 
-import ADraft.BinarySearchDemo;
-
 import java.util.*;
 
 import static java.time.LocalTime.now;
@@ -80,12 +78,12 @@ public class N300MLongestIncreasingSubsequence {
         System.out.println("["+(expected == r)+"]"+(c++)+". expected:"+expected +". result:"+r);
     }
 
-    //下面还有一种Binary Search
+
     //2.Binary Search
     //Runtime: 99 ms, faster than 31.12% of Java online submissions for Longest Increasing Subsequence.
     //Memory Usage: 46.2 MB, less than 13.88% of Java online submissions for Longest Increasing Subsequence.
     //Time: O(N * logN); Space:O(N)
-    public int lengthOfLIS(int[] nums) {
+    public int lengthOfLIS_2(int[] nums) {
         int[] counts = new int[nums.length];
         counts[0] = 1;
 
@@ -109,24 +107,22 @@ public class N300MLongestIncreasingSubsequence {
         return res;
     }
 
-    //看数据得出的规律后，写起来比较快。
+
     //2022.10.11 改写成forward
-    //1.dp
-    //Runtime: 60 ms, faster than 68.38% of Java online submissions for Longest Increasing Subsequence.
-    //Memory Usage: 42 MB, less than 89.06% of Java online submissions for Longest Increasing Subsequence.
-    //Dynamic programming.
+    //1.dp bottom-up
+    //Runtime: 55 ms, 72%; 41.7MB 94%
     //Time:O(N * N); Space:O(N)
     public int lengthOfLIS_1(int[] nums) {
-        int[] counter = new int[nums.length];
-        counter[0] = 1;
+        int[] dp = new int[nums.length];
+        dp[0] = 1;
 
         int res = 1;
         for (int i = 1; i < nums.length; i++) {
-            int currCount = counter[i];
+            int currCount = dp[i];
             for (int j = 0; j < i; j++)
-                if(nums[j] < nums[i]) currCount = Math.max(currCount, counter[j]);
-            counter[i] = currCount + 1;
-            res = Math.max(res, counter[i]);
+                if (nums[j] < nums[i]) currCount = Math.max(currCount, dp[j]);
+            dp[i] = currCount + 1;
+            res = Math.max(res, dp[i]);
         }
         return res;
     }
@@ -148,67 +144,34 @@ public class N300MLongestIncreasingSubsequence {
         return maxCount;
     }
 
-
-
-
-
-    /////////// 以下二种实现 是网上copy来的，参考用 /////////////////////
-    //用组串的方式实现，这个比较trick .
-    public int lengthOfLIS_buildstr(int[] nums) {
-        ArrayList<Integer> sub = new ArrayList<>();
-        sub.add(nums[0]);
+    //updated 2022/12/17
+    //from Discussion
+    //Runtime: 4ms, 96%; Memory: 42.1MB 82%
+    //Time: O(N * logN); Space: O(N)
+    public int lengthOfLIS(int[] nums) {
+        ArrayList<Integer> window = new ArrayList<>();
+        window.add(nums[0]);
 
         for (int i = 1; i < nums.length; i++) {
             int num = nums[i];
-            if (num > sub.get(sub.size() - 1)) {
-                sub.add(num);
+            if (num > window.get(window.size() - 1)) {
+                window.add(num);
             } else {
                 // Find the first element in sub that is greater than or equal to num
-                int j = 0;
-                while (num > sub.get(j)) j++;
-                sub.set(j, num);
+
+                // A.iteration find
+                //  int j = 0;
+                //  while (num > sub.get(j)) j++;
+
+                // B.binary search
+                int j = Collections.binarySearch(window, num);
+                if (j < 0) j = -j - 1;
+
+                window.set(j, num);
             }
         }
-        return sub.size();
+        return window.size();
     }
 
-    //在组串基础上加了binarySearch
-    public int lengthOfLIS_binarySearch(int[] nums) {
-        ArrayList<Integer> sub = new ArrayList<>();
-        sub.add(nums[0]);
-
-        for (int i = 1; i < nums.length; i++) {
-            int num = nums[i];
-            if (num > sub.get(sub.size() - 1)) {
-                sub.add(num);
-            } else {
-                int j = binarySearch(sub, num);
-                sub.set(j, num);
-            }
-        }
-
-        return sub.size();
-    }
-
-    private int binarySearch(ArrayList<Integer> sub, int num) {
-        int left = 0;
-        int right = sub.size() - 1;
-        int mid = (left + right) / 2;
-
-        while (left < right) {
-            mid = (left + right) / 2;
-            if (sub.get(mid) == num) {
-                return mid;
-            }
-
-            if (sub.get(mid) < num) {
-                left = mid + 1;
-            } else {
-                right = mid;
-            }
-        }
-
-        return left;
-    }
 
 }
