@@ -76,7 +76,7 @@ public class N1335HMinimumDifficultyofaJobSchedule {
     //Runtime: 7 ms, faster than 98.32% of Java online submissions for Minimum Difficulty of a Job Schedule.
     //Memory Usage: 40.2 MB, less than 90.69% of Java online submissions for Minimum Difficulty of a Job Schedule.
     //Time: O(N * D); Space: O(N)
-    public int minDifficulty(int[] jobDifficulty, int d) {
+    public int minDifficulty_4(int[] jobDifficulty, int d) {
         if (jobDifficulty.length < d) return -1;
 
         // prevDP, currDP is the minimum total job difficulty for the current day and previous day, respectively
@@ -185,7 +185,7 @@ public class N1335HMinimumDifficultyofaJobSchedule {
     //Runtime: 8 ms, faster than 96.74% of Java online submissions for Minimum Difficulty of a Job Schedule.
     //Memory Usage: 40 MB, less than 96.94% of Java online submissions for Minimum Difficulty of a Job Schedule.
     //Time: O(N * N * D)Space: O(N * D)
-    public int minDifficulty_2(int[] jobDifficulty, int d) {
+    public int minDifficulty(int[] jobDifficulty, int d) {
         if (jobDifficulty.length < d) return -1;
 
         int[][] dp = new int[jobDifficulty.length + 1 ][d + 1];
@@ -221,14 +221,14 @@ public class N1335HMinimumDifficultyofaJobSchedule {
     }
     int[][] memo;
     private int helper_dp(int[] jobDifficulty, int begin, int d){
+        if (d <= 0 ) return 0;
         if (memo[begin][d] != -1) return memo[begin][d];
 
         int res = Integer.MAX_VALUE;
         int currMax = -1;
         for (int i = begin; i < jobDifficulty.length - (d - 1); i++) {
-            if (jobDifficulty[i] > currMax) currMax = jobDifficulty[i];
-            if (d > 1)
-                res = Math.min(res, currMax + helper_dp(jobDifficulty, i + 1, d - 1));
+            currMax = Math.max(currMax, jobDifficulty[i]);
+            res = Math.min(res, currMax + helper_dp(jobDifficulty, i + 1, d - 1));
         }
         return memo[begin][d] = d == 1 ? currMax : res;
     }

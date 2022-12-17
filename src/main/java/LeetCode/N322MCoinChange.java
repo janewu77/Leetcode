@@ -40,8 +40,6 @@ import static java.time.LocalTime.now;
 
 /**
  * - M - 【time：20-
- * - backtracling 卡了很多时间。放弃
- * - DP 花了20分钟就完成了
  *
  */
 public class N322MCoinChange {
@@ -83,11 +81,9 @@ public class N322MCoinChange {
         System.out.println("["+(expect == res)+"]expect:" + expect + " res:" + res);
     }
 
-    //20分钟左右写出来的。但在写这个之间在又以一次卡在backtracking上了。
-    //Runtime: 18 ms, faster than 91.22% of Java online submissions for Coin Change.
-    //Memory Usage: 41.6 MB, less than 98.34% of Java online submissions for Coin Change.
-    //DP - bottom up
-    //Time：O(A + N * A); Space: O(A+1);
+    //2.DP - bottom up
+    //Runtime: 16 ms, 93.7%; Memory Usage: 42 MB, 89.73
+    //Time：O(N * A); Space: O(A);
     public int coinChange(int[] coins, int amount) {
         if (amount == 0) return 0;
         int MAX = amount + 1;
@@ -103,8 +99,8 @@ public class N322MCoinChange {
         //Time：O(N * A)
         for (int coin : coins) {
             if (coin > amount) continue;
-            for (int sum = 1; sum <= amount; sum++) {
-                if(coin + sum <= amount && dp_sum[sum] != MAX) {
+            for (int sum = 1; sum + coin <= amount; sum++) {
+                if (dp_sum[sum] != MAX) {
                     dp_sum[coin + sum] = Math.min(dp_sum[coin + sum], dp_sum[coin] + dp_sum[sum]);
                 }
             }
@@ -115,23 +111,29 @@ public class N322MCoinChange {
 
 
     ////////////////////////////////////////////////
-    //Time Limit Exceeded
-    //In the worst case, complexity is exponential in the number of the coins nn.
-    //Back tracking
+    //1.Back tracking
+    //Runtime: 26ms, 76.75%; Memory: 42.6MB, 82.64%
+    //Time: O(A * N); Space: O(A)
     public int coinChange_1(int[] coins, int amount) {
+        int[] memo = new int[amount + 1];
         if (amount == 0) return 0;
-        Arrays.sort(coins);
-        int res = helper_backtracking_1(coins, amount, coins.length-1);
+
+        //Arrays.sort(coins);
+        int res = helper_backtracking_1(coins, amount,  memo);
         return res == Integer.MAX_VALUE ? -1 : res;
     }
 
-    private int helper_backtracking_1(int[] coins, int amount, int begin){
+    private int helper_backtracking_1(int[] coins, int amount, int[] memo){
         if (amount == 0) return 0;
+        if (memo[amount] != 0) return memo[amount];
+
         int res = Integer.MAX_VALUE;
-        for (int i = begin; i >= 0; i--){
+        for (int i = coins.length - 1; i >= 0; i--){
             if (coins[i] > amount) continue;
-            res = Math.min(res, helper_backtracking_1(coins, amount - coins[i], i));
+            res = Math.min(res, helper_backtracking_1(coins, amount - coins[i],  memo));
         }
-        return res == Integer.MAX_VALUE ? Integer.MAX_VALUE : (res + 1);//% Integer.MAX_VALUE;
+
+        memo[amount] = res == Integer.MAX_VALUE ? Integer.MAX_VALUE : (res + 1);
+        return memo[amount];
     }
 }
