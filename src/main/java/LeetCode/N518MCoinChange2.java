@@ -89,9 +89,8 @@ public class N518MCoinChange2 {
 
 
     ////////////////////////////////////////////////////////////////////////////
-    //Runtime: 3 ms, faster than 94.50% of Java online submissions for Coin Change 2.
-    //Memory Usage: 42.6 MB, less than 59.05% of Java online submissions for Coin Change 2.
-    //Dynamic programming
+    //2.Dynamic programming bottom-up
+    ///Runtime: 2ms 100%; Memory: 39.6 MB, 96%
     //Time: O(coins.length * amount); Space: O(amount)
     public int change(int amount, int[] coins) {
         if (amount == 0) return 1;
@@ -100,29 +99,32 @@ public class N518MCoinChange2 {
         dp[0] = 1;
 
         for(int i = 0; i < coins.length; i++)
-            for(int j = coins[i]; j <= amount; j++)
+            for (int j = coins[i]; j <= amount; j++)
                 dp[j] += dp[j - coins[i]];
         return dp[amount];
     }
 
 
-    ////////////////////////////////////////////////////////////////////////////
-    //Time Limit Exceeded
-    //Time: 10+
-    //Time: O(N*N)
+    //1.DP top-down + memo
+    //Runtime: 104ms 8%; Memory: 46.3 MB, 57%
+    //Time: O(N * L); Space:  O(N * L);
+    //let N be the amount; L be the length of the input array coins
     public int change_1(int amount, int[] coins) {
-        Arrays.sort(coins);
-        return helper_backtracking(amount, coins, 0);
+        int[][] memo = new int[amount + 1][coins.length];
+        for (int i = 0; i < amount + 1; i++)
+            Arrays.fill(memo[i], -1);
+        return helper_backtracking(amount, coins, 0, memo);
     }
 
-    private int helper_backtracking(int amount, int[] coins, int begin){
+    private int helper_backtracking(int amount, int[] coins, int begin, int[][] memo){
         if (amount == 0) return 1;
-
+        if (memo[amount][begin] >= 0) return memo[amount][begin];
         int res = 0;
-        for(int i = begin; i<coins.length; i++) {
-            if (coins[i] > amount) break;
-            res += helper_backtracking(amount - coins[i], coins, i);
+        for (int i = begin; i < coins.length; i++) {
+            if (coins[i] > amount) continue;
+            res += helper_backtracking(amount - coins[i], coins, i, memo);
         }
+        memo[amount][begin] = res;
         return res;
     }
 }
