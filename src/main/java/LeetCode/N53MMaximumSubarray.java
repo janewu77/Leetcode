@@ -35,8 +35,7 @@ import static java.time.LocalTime.now;
  */
 
 /**
- * M - 耗时 120+
- *  - 需要好好思考才能理解
+ * M - T 120+
  *
  */
 public class N53MMaximumSubarray {
@@ -65,19 +64,70 @@ public class N53MMaximumSubarray {
         System.out.println( "["+(result == expected)+"]"+title+".expected "+expected+"; result:"+ result);
     }
 
-    //Runtime: 1 ms, faster than 100.00% of Java online submissions for Maximum Subarray.
-    //Memory Usage: 51.5 MB, less than 95.20% of Java online submissions for Maximum Subarray.
-    // 这个需要想一会，才能明白
+    //3.Divide and Conquer
+    //Time: O(N * logN); Space:O(logN)
     public int maxSubArray(int[] nums) {
-        int maxSum = nums[0];
-        int currSum = nums[0];
-        for (int i = 1; i< nums.length; i++){
-           currSum = Math.max(nums[i], currSum + nums[i]);
-           maxSum = Math.max(maxSum, currSum);
+        return helper(nums, 0, nums.length - 1);
+    }
 
+    private int helper(int[] nums, int left, int right){
+        if (left > right) return Integer.MIN_VALUE;
+
+        int currSum = 0, maxSumLeft = 0, maxSumRight = 0;
+        int mid = (left + right) / 2;
+
+        //mid is the center!
+        //left (from mid to left)
+        for (int i = mid - 1; i >= left; i--) {
+            currSum += nums[i];
+            maxSumLeft = Math.max(maxSumLeft, currSum);
+        }
+
+        currSum = 0;
+        //right (from mid to right)
+        for (int i = mid + 1; i <= right; i++) {
+            currSum += nums[i];
+            maxSumRight = Math.max(maxSumRight, currSum);
+        }
+        int res = maxSumLeft + nums[mid] + maxSumRight;
+        res = Math.max(res, helper(nums, left, mid - 1));
+        res = Math.max(res, helper(nums, mid + 1, right));
+        return res;
+    }
+
+    //2.Kadane's Algorithm DP
+    //Runtime: 1 ms, 100%; 51.8 MB 83%
+    //Time: O(N); Space: O(1)
+    public int maxSubArray_2(int[] nums) {
+        int maxSum = nums[0], currSum = nums[0];
+        for (int i = 1; i< nums.length; i++){
+            //keep the worth keeping(larger part)
+            currSum = Math.max(nums[i], currSum + nums[i]);
+            maxSum = Math.max(maxSum, currSum);
         }
         return maxSum;
     }
+
+
+    //1.Brute force
+    //Time Limit Exceeded
+    //Time: O(N * N); Space: O(1)
+    public int maxSubArray1(int[] nums) {
+        int maxSum = Integer.MIN_VALUE;
+        if (nums.length == 1) return nums[0];
+
+        for(int i = 0; i < nums.length; i++){
+            int tmp = 0;
+            for(int j = i; j < nums.length; j++){
+                tmp += nums[j];
+                maxSum = Math.max(maxSum, tmp);
+            }
+        }
+        return maxSum;
+    }
+
+
+
 
     //Time Limit Exceeded
     //太复杂了
@@ -148,21 +198,7 @@ public class N53MMaximumSubarray {
     }
 
 
-    //Time Limit Exceeded
-    // 耗时 20-
-    public int maxSubArray1(int[] nums) {
-        int maxSum = Integer.MIN_VALUE;
-        if (nums.length == 1) return nums[0];
 
-        for(int i = 0; i < nums.length; i++){
-            int tmp = 0;
-            for(int j = i; j < nums.length; j++){
-                tmp += nums[j];
-                maxSum = Math.max(maxSum, tmp);
-            }
-        }
-        return maxSum;
-    }
 
 }
 

@@ -55,9 +55,9 @@ import java.util.*;
  */
 public class N1971EFindIfPathExistinGraph {
 
+    //2.DFS
     //Runtime: 67 ms, faster than 85.63% of Java online submissions for Find if Path Exists in Graph.
     //Memory Usage: 116.8 MB, less than 97.42% of Java online submissions for Find if Path Exists in Graph.
-    //DFS
     //Time: O(V + E); Space: O(V + E);
     //V represents the number of vertices, and E represents the number of edges.
     public boolean validPath(int n, int[][] edges, int source, int destination) {
@@ -95,9 +95,9 @@ public class N1971EFindIfPathExistinGraph {
     }
 
 
+    //1.Union Find
     //Runtime: 30 ms, faster than 90.77% of Java online submissions for Find if Path Exists in Graph.
     //Memory Usage: 138.2 MB, less than 84.41% of Java online submissions for Find if Path Exists in Graph.
-    //Union Find
     //Time: O(UF); Space: O(UF)
     public boolean validPath_1(int n, int[][] edges, int source, int destination) {
         UnionFind uf = new UnionFind(n);

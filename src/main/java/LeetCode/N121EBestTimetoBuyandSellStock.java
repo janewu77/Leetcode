@@ -45,12 +45,7 @@ package LeetCode;
 
 import static java.time.LocalTime.now;
 
-/**
- * E - 耗时60+
- *  - 被困在了被"超时"里。
- *
- *
- */
+
 public class N121EBestTimetoBuyandSellStock {
 
     public static void main(String[] args){
@@ -72,11 +67,53 @@ public class N121EBestTimetoBuyandSellStock {
         System.out.println("["+(expected == res)+"].expected:"+ expected+".res:"+res);
     }
 
+    //3.DP
+    //Runtime: 1ms 100%; Memory: 59.2MB 79%
+    //Time: O(N); Space: O(1)
+    public int maxProfit(int[] prices) {
+        int sold0 = 0, buy1 = Integer.MIN_VALUE;
+        for (int price : prices) {
+            sold0 = Math.max(sold0, buy1 + price);
+            buy1 = Math.max(buy1, -price);
+        }
+        return sold0;
+    }
+
+    //2.one-pass
+    //Runtime: 1ms 100%; Memory: 59.2MB 79%
+    //Time: O(N); Space: O(1)
+    public int maxProfit_2(int[] prices) {
+        int res = 0, minPrice = prices[0];
+        for (int price : prices) {
+            minPrice = Math.min(minPrice, price);
+            res = Math.max(res, price - minPrice);
+        }
+        return res;
+    }
+
+    //1.pre-compute
+    //Runtime: 3ms 71%; Memory: 53.4MB 99%
+    //Time: O(N); Space: O(N)
+    public int maxProfit_1(int[] prices) {
+        int[] maxBackward = new int[prices.length];
+
+        maxBackward[prices.length - 1] = 0;
+        for (int i = prices.length - 1; i > 0; i--)
+            maxBackward[i - 1] = Math.max(maxBackward[i], prices[i]);
+
+        int res = 0;
+        for (int i = 0; i < prices.length; i++)
+            res = Math.max(res, maxBackward[i] - prices[i]);
+        return res;
+    }
+
+
+    /////////////////////////////////////////////////
     //2022.9.13
     //Runtime: 1 ms, faster than 100.00% of Java online submissions for Best Time to Buy and Sell Stock.
     //Memory Usage: 59.4 MB, less than 87.24% of Java online submissions for Best Time to Buy and Sell Stock.
     //Time: O(N); Space: O(1)
-    public int maxProfit(int[] prices) {
+    public int maxProfit_04(int[] prices) {
         int balAfterSold0 = 0, balAfterBuy1 = Integer.MIN_VALUE;
         for(int price: prices){
             balAfterSold0 = Math.max(balAfterSold0, balAfterBuy1 + price);
@@ -85,7 +122,7 @@ public class N121EBestTimetoBuyandSellStock {
         return balAfterSold0;
     }
 
-    public int maxProfit2(int[] prices) {
+    public int maxProfit_03(int[] prices) {
         int profit = 0, cost = prices[0];
         for(int price: prices){
             cost = Math.min(cost, price); //最小成本
@@ -97,7 +134,7 @@ public class N121EBestTimetoBuyandSellStock {
     //Time Limit Exceeded
     //Brute Force
     //Time: O(N*N); Space: O(1)
-    public int maxProfit_Brute(int[] prices) {
+    public int maxProfit_Brute_02(int[] prices) {
         int result = 0;
         for(int i = 0; i < prices.length; i++)
             for(int j = i + 1; j < prices.length; j++)
@@ -109,7 +146,7 @@ public class N121EBestTimetoBuyandSellStock {
     //Runtime: 2 ms, faster than 93.04% of Java online submissions for Best Time to Buy and Sell Stock.
     //Memory Usage: 59 MB, less than 89.53% of Java online submissions for Best Time to Buy and Sell Stock.
     //Time: O(N); Space: O(1)
-    public int maxProfit_0(int[] prices) {
+    public int maxProfit_01(int[] prices) {
         int min= prices[0];
         int result = 0;
         int yP = -1;
