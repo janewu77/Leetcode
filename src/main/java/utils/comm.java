@@ -18,6 +18,16 @@ public class comm {
         System.out.println("["+(expect.equals(res))+"]expect:" + expect + " res:" + res);
     }
 
+    static public List<List<Integer>> convert2DArr2List(int[][] data){
+        List<List<Integer>> keys = new ArrayList<>();
+        for (int i = 0; i < data.length; i++) {
+            List<Integer> list = new ArrayList<>();
+            for (int j = 0; j < data[i].length; j++)
+                list.add(data[i][j]);
+            keys.add(list);
+        }
+        return keys;
+    }
 
     static public String toString(List<List<Integer>>  results){
         StringBuilder sb = new StringBuilder();
@@ -41,5 +51,6 @@ public class comm {
         for(int n: nums) set.add(n);
         return set;
     }
+
 
 }

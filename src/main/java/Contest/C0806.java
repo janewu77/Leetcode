@@ -27,6 +27,7 @@ public class C0806 {
 
 
     static private void doRun(long expect, int n) {
+         //List<List<Integer>> keys = comm.convert2DArr2List(rooms);
 //        long res = new C0806().n1(n);
 //        comm.printListListString(expect, res);
 
@@ -38,6 +39,7 @@ public class C0806 {
         //boolean success = Arrays.equals(res, expect);
         //        System.out.println("["+success+"] expect:" + Arrays.toString(expect) + " res:" + Arrays.toString(res)));
     }
+
 
 }
 

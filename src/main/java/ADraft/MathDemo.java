@@ -48,4 +48,28 @@ public class MathDemo {
         primeFactors.add(num);
         return primeFactors;
     }
+
+    // n!
+    public long factorial(int n){
+        if (n == 1) return 1;
+        return n * factorial(n - 1);
+    }
+
+
+    //4.Math
+    //res = ((m + n)! / (m!n)! )
+    public int factorial2(int m, int n) {
+        //let M be the larger one
+        if (m < n) {
+            m = m + n;
+            n = m - n; m = m - n;
+        }
+        long res = 1;
+        // (m + n)! / (m!n!)
+        for (int i = m + 1, j = 1; i <= m + n; i++, j++){
+            res *= i; // (m + n)! / (m!) = (m + n) * (m + n - 1) * ....* (m + 2) * (m + 1)
+            res /= j; // 1 / n!
+        }
+        return (int)res;
+    }
 }
