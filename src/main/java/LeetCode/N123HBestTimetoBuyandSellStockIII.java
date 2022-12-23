@@ -1,7 +1,6 @@
 package LeetCode;
 
 
-import java.util.Arrays;
 
 import static java.time.LocalTime.now;
 
@@ -44,7 +43,11 @@ import static java.time.LocalTime.now;
 /**
  * H -[time: 120+
  */
-
+//121. Best Time to Buy and Sell Stock
+//122. Best Time to Buy and Sell Stock II
+//123. Best Time to Buy and Sell Stock III
+//188. Best Time to Buy and Sell Stock IV
+//309. Best Time to Buy and Sell Stock with Cooldown
 public class N123HBestTimetoBuyandSellStockIII {
     public static void main(String[] args){
         System.out.println(now());
@@ -73,11 +76,82 @@ public class N123HBestTimetoBuyandSellStockIII {
         System.out.println("["+(expected == res)+"].expected:"+ expected+".res:"+res);
     }
 
+
+    //2022.12.23
+    //3.DP
+    //Runtime: 5ms 79%; Memory: 75.9MB 74%
+    //Time: O(N); Space: O(1)
+    public int maxProfit(int[] prices) {
+        if (prices.length < 2) return 0;
+
+        int k = 2;
+        int[][] dp = new int[k][2]; //0 : buy; 1 sold
+        for (int i = 0; i < k; i++)
+            dp[i][0] = -prices[i];
+
+        for (int i = 1; i < prices.length; i++) {
+            for (int j = k - 1; j >= 0; j--) {
+                dp[j][1] = Math.max(dp[j][1], dp[j][0] + prices[i]);
+                dp[j][0] = Math.max(dp[j][0], (j - 1 >= 0 ? dp[j - 1][1] : 0) - prices[i]);
+            }
+        }
+        int res = 0;
+        for (int i = 0; i < k; i++) res = Math.max(res, dp[i][1]);
+        return res;
+    }
+
+
+    //2.DP
+    //Runtime: 2ms 99%; Memory: 58.4MB 88%
+    //Time: O(N); Space: O(1)
+    public int maxProfit_22(int[] prices) {
+        if (prices.length < 2) return 0;
+
+        int buy1 = -prices[0], sold1 = 0;
+        int buy2 = -prices[1], sold2 = 0;
+
+        for (int i = 1; i < prices.length; i++) {
+            sold2 = Math.max(sold2, buy2 + prices[i]);
+            buy2 = Math.max(buy2, sold1 - prices[i]);
+
+            sold1 = Math.max(sold1, buy1 + prices[i]);
+            buy1 = Math.max(buy1, -prices[i]);
+        }
+        return Math.max(sold1, sold2);
+    }
+
+    //1.Bidirectional Dynamic Programming
+    //Runtime: 4ms, 85%; Memory: 51.7MB 95%
+    //Time: O(N); Space: O(N)
+    public int maxProfit_21(int[] prices) {
+        int[] leftProfit = new int[prices.length];
+        int[] rightProfit = new int[prices.length];
+
+        int cost = prices[0];
+        for (int i = 1; i < prices.length; i++) {
+            cost = Math.min(cost, prices[i]);
+            leftProfit[i] = Math.max(leftProfit[i - 1], prices[i] - cost);
+        }
+
+        int maxPrice = prices[prices.length - 1];
+        for (int i = prices.length - 2; i >= 0; i--) {
+            maxPrice = Math.max(maxPrice, prices[i]);
+            rightProfit[i] = Math.max(rightProfit[i + 1], maxPrice - prices[i]);
+        }
+
+        int res = 0;
+        for (int i = 0; i < prices.length; i++)
+            res = Math.max(res, leftProfit[i] + rightProfit[i]);
+
+        return res;
+    }
+
+    //before 2022.12.23
     //Runtime: 5 ms, faster than 83.20% of Java online submissions for Best Time to Buy and Sell Stock III.
     //Memory Usage: 54.4 MB, less than 96.61% of Java online submissions for Best Time to Buy and Sell Stock III.
     //DP
     //Time: O(N*K); Space: O(1);
-    public int maxProfit(int[] prices) {
+    public int maxProfit_3(int[] prices) {
         int k = 2; //at most two transactions.
 
         //balance after buy or sold

@@ -33,6 +33,11 @@ import static java.time.LocalTime.now;
  * 0 <= prices.length <= 1000
  * 0 <= prices[i] <= 1000
  */
+//121. Best Time to Buy and Sell Stock
+//122. Best Time to Buy and Sell Stock II
+//123. Best Time to Buy and Sell Stock III
+//188. Best Time to Buy and Sell Stock IV
+//309. Best Time to Buy and Sell Stock with Cooldown
 public class N188HBestTimetoBuyandSellStockIV {
 
 
@@ -77,11 +82,11 @@ public class N188HBestTimetoBuyandSellStockIV {
     //Runtime: 1 ms, faster than 100.00% of Java online submissions for Best Time to Buy and Sell Stock IV.
     //Memory Usage: 40.4 MB, less than 94.75% of Java online submissions for Best Time to Buy and Sell Stock IV.
     //DP
-    //Time: O(N*K); Space: O(K);
+    //Time: O(N * K); Space: O(K);
     public int maxProfit(int k, int[] prices) {
         if (prices.length <= 1 || k <= 0) return 0;
 
-        //0 : after buy a stock; 1: after sold a stock
+        //0 : after sold a stock; 1: after buy a stock
         int[][] balance = new int[k][2];
         for (int[] x : balance) x[1] = Integer.MIN_VALUE;
 

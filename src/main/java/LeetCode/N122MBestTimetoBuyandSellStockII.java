@@ -43,6 +43,11 @@ import static java.time.LocalTime.now;
 /**
  * M - [time: 15-
  */
+//121. Best Time to Buy and Sell Stock
+//122. Best Time to Buy and Sell Stock II
+//123. Best Time to Buy and Sell Stock III
+//188. Best Time to Buy and Sell Stock IV
+//309. Best Time to Buy and Sell Stock with Cooldown
 public class N122MBestTimetoBuyandSellStockII {
 
 
@@ -71,53 +76,49 @@ public class N122MBestTimetoBuyandSellStockII {
         System.out.println("["+(expected == res)+"].expected:"+ expected+".res:"+res);
     }
 
-    //same as 121
-    //from chipbk10
-    //Runtime: 1 ms, faster than 97.57% of Java online submissions for Best Time to Buy and Sell Stock II.
-    //Memory Usage: 44.2 MB, less than 53.31% of Java online submissions for Best Time to Buy and Sell Stock II.
-    //DP
+    //3.DP
+    //Runtime: 0 ms, faster than 100.00%; Memory: 42 MB, less than 93%
     //Time: O(N); Space: O(1)
     public int maxProfit(int[] prices) {
-        int balAfterSold0 = 0, balAfterBuy1 = -prices[0];
-        for (int price: prices) {
-            int afterSold0 = Math.max(balAfterSold0, balAfterBuy1 + price);
-            int afterBuy1 = Math.max(balAfterBuy1, balAfterSold0 - price);
-            balAfterSold0 = afterSold0;
-            balAfterBuy1 = afterBuy1;
+        int sold0 = 0, buy1= -prices[0];
+        for (int price : prices){
+            int prevSold = sold0;
+            sold0 = Math.max(sold0, buy1 + price);
+            buy1= Math.max(buy1, prevSold - price);
         }
-        return balAfterSold0;
+        return sold0;
     }
 
-    //Runtime: 0 ms, faster than 100.00% of Java online submissions for Best Time to Buy and Sell Stock II.
-    //Memory Usage: 42.6 MB, less than 87.20% of Java online submissions for Best Time to Buy and Sell Stock II.
-    //Peak Valley Approach
+
+    //2.Peak Valley Approach
+    //Runtime: 0 ms, faster than 100.00%; Memory: 42.6 MB, less than 76%
     //Time: O(N); Space: O(1)
     public int maxProfit2(int[] prices) {
-        int profit = 0, idx = 0;
-        while (idx < prices.length - 1) {
+        int profit = 0;
 
+        for (int idx = 0; idx < prices.length - 1; idx++) {
             //valley
             while (idx < prices.length - 1 && prices[idx] >= prices[idx + 1]) idx++;
             int buyerPrice = prices[idx];
 
             //peak
             while (idx < prices.length - 1 && prices[idx] <= prices[idx + 1]) idx++;
-            profit += prices[idx++] - buyerPrice;
+            profit += prices[idx] - buyerPrice;
         }
         return profit;
     }
 
 
-    //逐个累加
-    //Runtime: 1 ms, faster than 97.57% of Java online submissions for Best Time to Buy and Sell Stock II.
-    //Memory Usage: 44.3 MB, less than 46.58% of Java online submissions for Best Time to Buy and Sell Stock II.
-    //Single pass.
-    //Time: O(N)
+    //1. single pass
+    //Runtime: 1 ms, 95%; Memory: 41.9 MB 96%
+    //Time: O(N); Space: O(N)
     public int maxProfit1(int[] prices) {
         int profit = 0;
-        for(int i = 1; i< prices.length; i++)
-            if (prices[i] - prices[i-1] > 0)
-                profit += prices[i] - prices[i-1];
+        for(int i = 1; i< prices.length; i++) {
+            int todayProfit = prices[i] - prices[i - 1];
+            if (todayProfit > 0)
+                profit += todayProfit;
+        }
         return profit;
     }
 
