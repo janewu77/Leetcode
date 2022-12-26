@@ -59,34 +59,122 @@ import java.util.Arrays;
  *  - 对于递归，通常可用memo保存中间结果，以提高整体性能。
  *
  */
+//256. Paint House
+//265. Paint House II
+//1473. Paint House III
 public class N1473HPaintHouseIII {
 
     public static void main(String[] args){
         int[] houses;
         int[][] cost;
-        int m;
-        int n;
-        int target;
+        int m, n, target;
+
+        houses = new int[]{0,0,0,1};
+        cost = new int[][]{{1,5},{4,1},{1,3},{4,4}};
+        m = 4; n = 2; target = 4;
+        doRun(12, houses,cost,m,n,target);
 
         houses = new int[]{0,0,0,0,0};
         cost = new int[][]{{1,10},{10,1},{10,1},{1,10},{5,1}};
         m = 5; n = 2; target = 3;
-        System.out.println("1.expected 9. result: "+ new N1473HPaintHouseIII().minCost(houses,cost,m,n,target));
+        doRun(9, houses,cost,m,n,target);
 
         houses = new int[]{0,2,1,2,0};
         cost = new int[][]{{1,10},{10,1},{10,1},{1,10},{5,1}};
         m = 5; n = 2; target = 3;
-        System.out.println("2.expected 11. result: "+ new N1473HPaintHouseIII().minCost(houses,cost,m,n,target));
+        doRun(11, houses,cost,m,n,target);
 
         houses = new int[]{3,1,2,3};
         cost = new int[][]{{1,1,1},{1,1,1},{1,1,1},{1,1,1}};
         m = 4; n = 3; target = 3;
-        System.out.println("3.expected -1. result: "+ new N1473HPaintHouseIII().minCost(houses,cost,m,n,target));
+        doRun(-1, houses,cost,m,n,target);
     }
 
+    static private void doRun(int expect, int[] houses, int[][] cost, int m, int n, int target) {
+        int res = new N1473HPaintHouseIII().minCost(houses, cost, m, n, target);
+        System.out.println("["+(expect == res)+"]expect:" + expect + " res:" + res);
+    }
+
+    //2022.12.24
+    //2.DP bottom-up
+    //Runtime: 29ms 92%; Space: 43.2MB 87%
+    //Time: O(N * G * C); Space: O(N * G * C)
+    //let n be the number of houses, G be the number of groups, C be the number of colors
+    public int minCost(int[] houses, int[][] cost, int m, int n, int target) {
+        int[][][] dp = new int[houses.length][target + 1][n + 1];
+        dp[0][target] = cost[0];
+
+        for (int i = 1; i < houses.length; i++) {
+
+            if (houses[i] == 0){
+                for (int j = target; j >= 1; j--) {
+                    for (int color = 1; color <= n; color++) {
+                        int minPast = Integer.MAX_VALUE;
+                        for (int c = 1; c <= n; c++) {
+                            minPast = Math.min(minPast, dp[i - 1][j + (color == c ? 0 : 1)][c]);
+                        }
+                        if (minPast != Integer.MAX_VALUE)
+                            minPast = cost[i][color] + minPast;
+                        dp[i][j][color] = minPast;
+                    }
+                }
+
+            }else{
+                for (int j = target; j >= 1; j--) {
+                    Arrays.fill(dp[i][j], Integer.MAX_VALUE);
+                    dp[i][j][houses[i]] = dp[i - 1][j][houses[i]];
+                    for (int color = 1; color <= n; color++) {
+                        dp[i][j][houses[i]] = dp[i - 1][j + (houses[i] == color ? 0 : 1)][houses[i]];
+                    }
+                }
+            }
+
+        }
+
+        int res = Integer.MAX_VALUE;
+        for (int color = 1; color <= n; color++) {
+            res = Math.min(res, dp[houses.length - 1][0][color]);
+        }
+        return res;
+    }
+
+    //1.DP top-down
+    //Runtime: 29ms 92%; Space: 43.2MB 87%
+    //Time: O(N * G * C); Space: O(N * G * C)
+    //let n be the number of houses, G be the number of groups, C be the number of colors
+    public int minCost_21(int[] houses, int[][] cost, int m, int n, int target) {
+        int[][][] memo = new int[houses.length][target + 1][n + 1];
+
+        int res = helper_dp(houses, cost, 0, target, 0, memo);
+        return res == Integer.MAX_VALUE ? -1 : res;
+    }
+    private int helper_dp(int[] houses, int[][] cost, int idx, int group, int currColor, int[][][] memo){
+        if (group < 0) return Integer.MAX_VALUE;
+        if (idx == houses.length)
+            return group == 0 ? 0 : Integer.MAX_VALUE;
+
+        if (memo[idx][group][currColor] != 0) return memo[idx][group][currColor];
+
+        if (houses[idx] == 0) {
+            //try every color
+            int res = Integer.MAX_VALUE;
+            for (int color = 1; color <= cost[0].length; color++) {
+                int nextCost = helper_dp(houses, cost, idx + 1, (color == currColor) ? group : group - 1, color, memo);
+                if (nextCost != Integer.MAX_VALUE)
+                    res = Math.min(res, cost[idx][color - 1] + nextCost);
+            }
+            memo[idx][group][currColor] = res;
+        } else {
+            //have been painted last summer should not be painted again
+            memo[idx][group][currColor] = helper_dp(houses, cost, idx + 1, (houses[idx] == currColor) ? group : group - 1, houses[idx], memo);
+        }
+        return memo[idx][group][currColor];
+    }
+
+    //before 2022.12.24
     //Runtime: 23 ms, faster than 90.94% of Java online submissions for Paint House III.
     //Memory Usage: 48.9 MB, less than 52.50% of Java online submissions for Paint House III.
-    public int minCost(int[] houses, int[][] cost, int m, int n, int target) {
+    public int minCost_3(int[] houses, int[][] cost, int m, int n, int target) {
         int MAX_COST = 1000001; //10000 * 100 + 1; // see Constraints
         //target(+0) | color
         int[][] prevData = new int[target+1][n];

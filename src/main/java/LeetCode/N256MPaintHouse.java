@@ -44,38 +44,77 @@ import java.util.Map;
  *  - 精简后的代码，很让人惊奇。
  *  - 从前往后累加 & 利用原空间
  */
+
+//256. Paint House
+//265. Paint House II
+//1473. Paint House III
 public class N256MPaintHouse {
 
 
     public static void main(String[] args){
         int[][] costs;
-
+        System.out.println(now());
         costs = new int[][]{{7,6,2}};
-        doRun(costs ,2, "1");
+        doRun(costs ,2);
 
         costs = new int[][]{{17,2,17},{16,16,5},{14,3,19}};
-        doRun(costs ,10, "2");
+        doRun(costs ,10);
 
         costs = new int[][]{{17,19,16},{11,17,17}};
-        doRun(costs ,27, "3");
+        doRun(costs ,27);
         costs = new int[][]{{3,5,3},{6,17,6},{7,13,18},{9,10,18}};
-        doRun(costs ,26, "4");
+        doRun(costs ,26);
 
         costs = new int[][]{{17,19,16},{11,17,17},{14,18,10},{17,20,17},{14,2,13},{9,6,14},{20,5,17},{19,19,5},{5,14,6},{9,17,19},{17,13,6},{7,10,7},{2,18,15},{9,9,13},{8,17,14},{8,20,11},{2,11,18},{14,20,6},{10,1,9},{16,12,7}};
-        System.out.println(now());
-        doRun(costs ,159, "time1");
+
+        doRun(costs ,159);
         System.out.println(now());
     }
 
-    private static void doRun(int[][] costs, int expected, String  title){
+    private static void doRun( int[][] costs, int expected ){
         int result = new N256MPaintHouse().minCost(costs);
-        System.out.println ("["+(expected == result)+"] "+title+".expected: "+expected +". result:"+ result);
+        System.out.println ("["+(expected == result)+"]expected: "+expected +". result:"+ result);
     }
 
+    //2022.12.24
+    //2.DP top-down
+    //Runtime: 0ms 100%; Memory: 41MB 91%
+    //Time: O(N); Space: O(N)
+    public int minCost(int[][] costs) {
+        int[] res = helper_dp(costs, costs.length - 1);
+        return Math.min(Math.min(res[0], res[1]), res[2]);
+    }
+    private int[] helper_dp(int[][] costs, int d){
+        if (d == 0)return costs[0];
+
+        int[] res = new int[3];
+        int[] lastCost = helper_dp(costs, d - 1);
+        res[0] = costs[d][0] + Math.min(lastCost[1], lastCost[2]);
+        res[1] = costs[d][1] + Math.min(lastCost[0], lastCost[2]);
+        res[2] = costs[d][2] + Math.min(lastCost[0], lastCost[1]);
+        return res;
+    }
+
+    //1.DP bottom-up
+    //Runtime: 1ms 91%; Memory: 41.9 MB 80%
+    //Time:O(N); Space:O(1);
+    public int minCost_21(int[][] costs) {
+        int[] dp = costs[0];
+        for (int i = 1; i < costs.length; i++) {
+            int[] lastDP = dp;
+            dp = new int[3];
+            dp[0] = costs[i][0] + Math.min(lastDP[1], lastDP[2]);
+            dp[1] = costs[i][1] + Math.min(lastDP[0], lastDP[2]);
+            dp[2] = costs[i][2] + Math.min(lastDP[0], lastDP[1]);
+        }
+        return Math.min(Math.min(dp[0], dp[1]), dp[2]);
+    }
+
+    //before 2022.12.24
     //Runtime: 1 ms, faster than 93.27% of Java online submissions for Paint House.
     //Memory Usage: 42.8 MB, less than 80.57% of Java online submissions for Paint House.
     // 从上一次中挑便宜的color forward
-    public int minCost(int[][] costs) {
+    public int minCost_2(int[][] costs) {
         for (int h = 1; h < costs.length; h++) {
             costs[h][0] += Math.min(costs[h - 1][1], costs[h - 1][2]);
             costs[h][1] += Math.min(costs[h - 1][0], costs[h - 1][2]);
