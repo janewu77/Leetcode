@@ -45,16 +45,16 @@ import static java.time.LocalTime.now;
 public class N97MInterleavingString {
     public static void main(String[] args){
         String s1,s2,s3;
-
+        System.out.println(now());
         s1 = "bccd";
         s2 = "bbcad";
         s3 = "bbbacccdd";
-        System.out.println("1.expected false. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
+        doRun(false, s1, s2, s3);
 
         s1 = "a";
         s2 = "ccb";
         s3 = "ccab";
-        System.out.println("2.expected true. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
+        doRun(true, s1, s2, s3);
 
         s1 = "aabcc";
         s2 = "dbbca";
@@ -67,99 +67,90 @@ public class N97MInterleavingString {
         s1 = "c";
         s2 = "ca";
         s3 = "cac";
-        System.out.println("3.expected true. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
-////
+        doRun(true, s1, s2, s3);
+
         s1 = "aabcc";
         s2 = "dbbca";
         s3 = "aadbcbbcac";
-        System.out.println("expected true. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
+        doRun(true, s1, s2, s3);
 
         s1 = "a";
         s2 = "";
         s3 = "c";
-        System.out.println("5.expected false. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
+        doRun(false, s1, s2, s3);
 
         s1 = "aa";
         s2 = "ab";
         s3 = "abaa";
-        System.out.println("6.expected true. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
+        doRun(true, s1, s2, s3);
 
         s1 = "aabaac";
         s2 = "aadaaeaaf";
         s3 = "aadaaeaabaafaac";
-        System.out.println("7.expected true. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
+        doRun(true, s1, s2, s3);
 
         s1 = "aabc";
         s2 = "abad";
         s3 = "aabcabad";
-        System.out.println("expected true. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
+        doRun(true, s1, s2, s3);
 
         s1 = "ac";
         s2 = "f";
         s3 = "fac";
-        System.out.println("9.expected true. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
+        doRun(true, s1, s2, s3);
 
         s1 = "aabd";
         s2 = "abdc";
         s3 = "aabdbadc";
-        System.out.println("10.expected false. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
+        doRun(false, s1, s2, s3);
 
         s1 = "";
         s2 = "";
         s3 = "";
-        System.out.println("11.expected true. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
-//
-////
+        doRun(true, s1, s2, s3);
+
         s1 = "bbbbbabbbbabaababaaaabbababbaaabbabbaaabaaaaababbbababbbbbabbbbababbabaabababbbaabababababbbaaababaa";
         s2 = "babaaaabbababbbabbbbaabaabbaabbbbaabaaabaababaaaabaaabbaaabaaaabaabaabbbbbbbbbbbabaaabbababbabbabaab";
         s3 = "babbbabbbaaabbababbbbababaabbabaabaaabbbbabbbaaabbbaaaaabbbbaabbaaabababbaaaaaabababbababaababbababbbababbbbaaaabaabbabbaaaaabbabbaaaabbbaabaaabaababaababbaaabbbbbabbbbaabbabaabbbbabaaabbababbabbabbab";
-        System.out.println(now());
-        System.out.println("expected false. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
-        System.out.println(now());
+        doRun(false, s1, s2, s3);
 
         s1 = "abababababababababababababababababababababababababababababababababababababababababababababababababbb";
         s2 = "babababababababababababababababababababababababababababababababababababababababababababababababaaaba";
         s3 = "abababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababbb";
-        System.out.println(now());
-        System.out.println("expected false. result:"+ new N97MInterleavingString().isInterleave(s1, s2, s3));
+        doRun(false, s1, s2, s3);
         System.out.println(now());
     }
 
+    static private void doRun(boolean expect, String ss1, String ss2, String ss3) {
+        boolean res = new N97MInterleavingString().isInterleave(ss1, ss2, ss3);
+        System.out.println("["+(expect == res)+"]expect:" + expect + " res:" + res);
+    }
 
-    //Runtime: 1 ms, faster than 99.65% of Java online submissions for Interleaving String.
-    //Memory Usage: 41.6 MB, less than 85.20% of Java online submissions for Interleaving String.
-    private byte[][] memories;
-    String s1,s2,s3;
+    //1.recursion + memo
+    //Runtime: 1 ms, 98%; Memory: 41MB 72%
+    //Time: O(L1 * L2); Space: O(L1 * L2)
     public boolean isInterleave(String ss1, String ss2, String ss3) {
         if(ss1.length() + ss2.length() != ss3.length()) return false;
         if (ss3.length() == 0) return true;
-        memories = new byte[ss1.length()+1][ss2.length()+1]; //0
-        s1 = ss1;
-        s2 = ss2;
-        s3 = ss3;
-        return isInterleave_s(0, 0, 0);
+        return helper(ss1, ss2, ss3,0, 0, 0, new Boolean[ss1.length()+1][ss2.length()+1]);
     }
 
-    //递归
-    private boolean isInterleave_s(int i1, int i2, int i3) {
-        if(memories[i1][i2] > 0) return false;
+    private boolean helper(String s1, String s2, String s3, int i1, int i2, int i3, Boolean[][] memo) {
+        if(memo[i1][i2] != null)
+            return memo[i1][i2];
 
         boolean result;
         if (i1 >= s1.length()) {
             result = s3.substring(i3).equals(s2.substring(i2));
-            if (!result) memories[i1][i2] = 1;
-            return result;
-        }
-        if (i2 >= s2.length()){
-            result = s3.substring(i3).equals(s1.substring(i1));
-            if (!result) memories[i1][i2] = 1;
-            return result;
-        }
 
-        result = ((s3.charAt(i3) == s1.charAt(i1) && isInterleave_s(i1+1, i2, i3+1))
-                || (s3.charAt(i3) == s2.charAt(i2) && isInterleave_s(i1, i2+1, i3 + 1)));
-        if (!result) memories[i1][i2] = 1;
-        return result;
+        } else if (i2 >= s2.length()) {
+            result = s3.substring(i3).equals(s1.substring(i1));
+
+        } else {
+            result = ((s3.charAt(i3) == s1.charAt(i1) && helper(s1, s2, s3,i1 + 1, i2, i3 + 1, memo))
+                    || (s3.charAt(i3) == s2.charAt(i2) && helper(s1, s2, s3, i1, i2 + 1, i3 + 1, memo)));
+        }
+        return memo[i1][i2] = result;
     }
 
 
