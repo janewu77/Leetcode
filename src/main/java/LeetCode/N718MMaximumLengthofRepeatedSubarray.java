@@ -26,7 +26,9 @@ import static java.time.LocalTime.now;
 
 /**
  * M - [time: 60
+ *
  */
+
 public class N718MMaximumLengthofRepeatedSubarray {
 
 
@@ -36,13 +38,9 @@ public class N718MMaximumLengthofRepeatedSubarray {
         String[] data;
 
         doRun(3, new int[]{1,0,0,0,1}, new int[]{1,0,0,1,1});
-
-
         doRun(4, new int[]{0,0,0,0,1}, new int[]{1,0,0,0,0});
-
         doRun(3, new int[]{1,2,3,2,1}, new int[]{3,2,1,4,7});
         doRun(5, new int[]{0,0,0,0,0}, new int[]{0,0,0,0,0});
-
 
         System.out.println(now());
         System.out.println("==================");
@@ -51,10 +49,6 @@ public class N718MMaximumLengthofRepeatedSubarray {
 
     static private void doRun(int expect, int[] nums1, int[] nums2) {
         int res = new N718MMaximumLengthofRepeatedSubarray().findLength(nums1, nums2);
-//        String res = res1.stream().map(i -> String.valueOf(i)).collect(Collectors.joining(","));
-//        String res = Arrays.stream(res1).mapToObj(i->String.valueOf(i)).collect(Collectors.joining(","));
-//        String res = comm.toString(res1);
-//        System.out.println("["+(expect.equals(res))+"]expect:" + expect + " res:" + res);
         System.out.println("["+(expect == res)+"]expect:" + expect + " res:" + res);
     }
 

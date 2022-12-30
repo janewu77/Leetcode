@@ -56,22 +56,70 @@ public class N1220HCountVowelsPermutation {
         doRun(10,2);
         doRun(68,5);
         doRun(18208803,144);
+
         System.out.println(now());
         System.out.println("==================");
 
     }
     static private void doRun(int expect, int n) {
         int res = new N1220HCountVowelsPermutation().countVowelPermutation(n);
-//        String res = comm.toString(res1);
         System.out.println("["+(expect == res)+"]expect:" + expect + " res:" + res);
-        //System.out.println("==================");
     }
 
-
-    //Runtime: 15 ms, faster than 88.24% of Java online submissions for Count Vowels Permutation.
-    //Memory Usage: 48.7 MB, less than 52.94% of Java online submissions for Count Vowels Permutation.
-    //Time: O(N); Space:O(5)
+    //2.DP top-down
+    //Runtime: 89ms 18%; Memory: 57.3mb 16.2%
+    //Time: O(N); Space: O(N);
+    int MODULO = 1000000007;
     public int countVowelPermutation(int n) {
+        Map<Integer, Integer> memo = new HashMap<>();
+        //a e i o u
+        int res = 0;
+        for (int i = 0; i < 5; i++)
+            res = (res + helper_dp(n, i, memo)) % MODULO;
+        return res;
+    }
+
+    private int helper_dp(int n, int c, Map<Integer, Integer> memo){
+        if (n == 1) return 1;
+
+        int key = n * 10 + c;
+        if (memo.containsKey(key)) return memo.get(key);
+
+        int res = 0;
+        switch (c){
+            case 0:
+                //ae
+                res = helper_dp(n - 1, 1, memo);
+                break;
+            case 1:
+                //ea ei
+                res = (helper_dp(n - 1, 0, memo) + helper_dp(n - 1, 2, memo)) % MODULO;
+                break;
+            case 2:
+                //ia ie io iu
+                long tmp = helper_dp(n - 1, 0, memo);
+                tmp += helper_dp(n - 1, 1, memo);
+                tmp += helper_dp(n - 1, 3, memo);
+                tmp += helper_dp(n - 1, 4, memo);
+                res = (int)(tmp % MODULO);
+                break;
+            case 3:
+                // oi ou
+                res = (helper_dp(n - 1, 2, memo) + helper_dp(n - 1, 4, memo)) % MODULO;
+                break;
+            default://4
+                //  ua
+                res =helper_dp(n - 1, 0, memo);
+
+        }
+        memo.put(key, res);
+        return res;
+    }
+
+    //1.DP bottom-up
+    //Runtime: 9ms 99%; Memory: 41.7mb 73%
+    //Time: O(N); Space:O(1)
+    public int countVowelPermutation_1(int n) {
         int MODULO = 1000000007;
         //a e i o u
         int[] dp = new int[]{1,1,1,1,1};
@@ -99,7 +147,7 @@ public class N1220HCountVowelsPermutation {
     ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
     //Time Limit Exceed
-    public int countVowelPermutation_1(int n) {
+    public int countVowelPermutation_tle(int n) {
 
         List<Character> list = new ArrayList<>();
         int res = 0;
