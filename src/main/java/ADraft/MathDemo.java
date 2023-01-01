@@ -1,7 +1,9 @@
 package ADraft;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MathDemo {
 
@@ -35,19 +37,34 @@ public class MathDemo {
 
 
     //乘积因子分解
-    static List<Integer> primeDecompose(int num) {
-        List<Integer> primeFactors = new ArrayList<Integer>();
-        for (int factor = 2; factor < Math.sqrt(num); factor++) {
+    static public Set<Integer> primeDecompose(int num) {
+        Set<Integer> primeFactors = new HashSet<>();
+        int factor = 2;
+
+        while (factor * factor <= num) {
             if (num % factor == 0) {
-                for (int i = 0; i < num / factor; i++) {
-                    primeFactors.add(factor);
-                    num /= factor;
-                }
+                primeFactors.add(factor);
+                num = num / factor;
+            } else {
+                factor += 1;
             }
         }
         primeFactors.add(num);
         return primeFactors;
     }
+//    static List<Integer> primeDecompose(int num) {
+//        List<Integer> primeFactors = new ArrayList<Integer>();
+//        for (int factor = 2; factor < Math.sqrt(num); factor++) {
+//            if (num % factor == 0) {
+//                for (int i = 0; i < num / factor; i++) {
+//                    primeFactors.add(factor);
+//                    num /= factor;
+//                }
+//            }
+//        }
+//        primeFactors.add(num);
+//        return primeFactors;
+//    }
 
     // n!
     public long factorial(int n){
@@ -71,5 +88,13 @@ public class MathDemo {
             res /= j; // 1 / n!
         }
         return (int)res;
+    }
+
+
+    private boolean isPrimes(int n){
+        if (n < 2) return false;
+        for (int i = 2; i <= Math.sqrt(n); i++)
+            if (n % i == 0) return false;
+        return true;
     }
 }

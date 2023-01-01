@@ -1,12 +1,36 @@
 package LeetCode;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static java.time.LocalTime.now;
 
+/**
+ * Given an integer n, return the number of prime numbers that are strictly less than n.
+ *
+ *
+ *
+ * Example 1:
+ *
+ * Input: n = 10
+ * Output: 4
+ * Explanation: There are 4 prime numbers less than 10, they are 2, 3, 5, 7.
+ * Example 2:
+ *
+ * Input: n = 0
+ * Output: 0
+ * Example 3:
+ *
+ * Input: n = 1
+ * Output: 0
+ *
+ *
+ * Constraints:
+ *
+ * 0 <= n <= 5 * 106
+ */
+
+//204. Count Primes
+//2523. Closest Prime Numbers in Range
 public class N204MCountPrimes {
 
     static public void main(String... args) throws IOException {
@@ -27,7 +51,7 @@ public class N204MCountPrimes {
         System.out.println("["+(expect == res)+"]expect:" + expect + " res:" + res);
     }
 
-    //2.
+    //2.Sieve of Eratosthenes
     //Runtime: 173ms 52%; Memory: 69.3MB 11%
     //Time: O(sqrt(N) * loglogN); Space: O(N)
     public int countPrimes(int n) {

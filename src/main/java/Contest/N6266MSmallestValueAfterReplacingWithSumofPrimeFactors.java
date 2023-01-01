@@ -42,6 +42,7 @@ import static java.time.LocalTime.now;
 //2507. Smallest Value After Replacing With Sum of Prime Factors
 public class N6266MSmallestValueAfterReplacingWithSumofPrimeFactors {
 
+
     static public void main(String... args) throws IOException{
         System.out.println(now());
         System.out.println("==================");
