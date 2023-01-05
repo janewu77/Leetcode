@@ -91,7 +91,7 @@ public class N6234MNumberofSubarraysWithLCMEqualtoK {
         }
         return res;
     }
-    //最小公倍数
+    //最小公倍数 4,6
     private int lcm(int a, int b) {
         return a * b / gcd(a, b);
     }
