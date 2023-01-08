@@ -38,11 +38,16 @@ public class N149HMaxPointsonaLine {
 
         int[][] points;
 
-        points = new int[][]{{0,0}};
-        doRun(1, points);
+        points = new int[][]{{0,0}, {2,2}, {-1, -1}};
+        doRun(3, points);
+
 
         points = new int[][]{{1,1},{3,2},{5,3},{4,1},{2,3},{1,4}};
         doRun(4, points);
+
+        points = new int[][]{{0,0}};
+        doRun(1, points);
+
         points = new int[][]{{1,1},{2,2},{3,3}};
         doRun(3, points);
 
@@ -58,14 +63,35 @@ public class N149HMaxPointsonaLine {
         System.out.println("["+(expected == res)+"].expected:"+ expected+".res:"+res);
     }
 
-    //Runtime: 22 ms, faster than 86.08% of Java online submissions for Max Points on a Line.
-    //Memory Usage: 47.5 MB, less than 65.02% of Java online submissions for Max Points on a Line.
-    //Time: O(N*N); Space: O(N)
+    //2023.1.8
+    //3.math atan2
+    //Runtime: 28ms 78%; Memory: 42.4MB 74%
+    //Time: O(N * N); Space: O(N)
+    public int maxPoints_3(int[][] points) {
+        if (points.length == 1) return 1;
+        int res = 2;
+
+        for (int i = 0; i < points.length - 1; i++) {
+
+            Map<Double, Integer> map = new HashMap<>();
+            for (int j = i + 1; j < points.length; j++) {
+                if (i == j) continue;
+
+                double x = Math.atan2(points[j][1] - points[i][1], points[j][0] - points[i][0]);
+                map.put(x, map.getOrDefault(x, 1) + 1);
+                res = Math.max(res, map.get(x));
+            }//End for
+        }
+        return res;
+    }
+
+    //2.GDC
+    //Runtime: 15ms 95%; Memory: 42.4MB 77%
+    //Time: O(N * N); Space: O(N)
     public int maxPoints(int[][] points) {
         if (points.length <= 2) return points.length;
         int res = 2;
 
-        //Time: O(N*N)
         for (int i = 0; i < points.length - 1; i++) {
             // slope: count
             Map<Pair<Integer, Integer>, Integer> map = new HashMap<>(); //Space: O(N)
@@ -100,6 +126,7 @@ public class N149HMaxPointsonaLine {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+    //
     //Runtime: 284 ms, faster than 5.07% of Java online submissions for Max Points on a Line.
     //Memory Usage: 117 MB, less than 5.03% of Java online submissions for Max Points on a Line.
     //Time: O(N*N*N)
