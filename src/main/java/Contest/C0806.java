@@ -16,7 +16,7 @@ public class C0806 {
         System.out.println("==================");
     }
 
-    //93
+    //92
     static private void doRun(long expect, int n) {
          //List<List<Integer>> keys = comm.convert2DArr2List(rooms);
 //        long res = new C0806().n1(n);
