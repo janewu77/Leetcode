@@ -74,7 +74,9 @@ public class N2421HNumberofGoodPaths {
         int[] data;
         int[][] data2;
 
+        doRun(24,  new int[]{20,13,19,12,14,13,8,8,13,3,3,5,11,7,15,7,11,7,5,1,8,7,15,13}, new int[][]{{0,1},{0,2},{2,3},{3,4},{0,5},{3,6},{4,7},{0,8},{9,8},{2,10},{11,7},{12,2},{5,13},{2,14},{15,2},{16,14},{11,17},{8,18},{14,19},{20,13},{21,18},{22,4},{23,4}});
 
+        doRun(9,  new int[]{3,1,1,1,3},new int[][]{{0,1}, {1,2}, {2, 3}, {3, 4}});
         doRun(6,  new int[]{1,3,2,1,3},new int[][]{{0,1}, {0,2}, {2, 3}, {2, 4}});
 
         doRun(15,  new int[]{5,5,5,5,5},new int[][]{{0,1},{1,2},{3,2},{3,4}});
@@ -85,22 +87,210 @@ public class N2421HNumberofGoodPaths {
         System.out.println("==================");
     }
 
-
     static private void doRun(int expect, int[] vals, int[][] edges) {
-        int res = new N2421HNumberofGoodPaths()
-                .numberOfGoodPaths(vals, edges);
-//        String res = res1.stream().map(i -> String.valueOf(i)).collect(Collectors.joining(","));
-//        String res = Arrays.stream(res1).mapToObj(i->String.valueOf(i)).collect(Collectors.joining(","));
-//        String res = comm.toString2(res1);
-//        System.out.println("["+(expect.equals(res))+"]expect:" + expect + " res:" + res);
+        int res = new N2421HNumberofGoodPaths().numberOfGoodPaths(vals, edges);
         System.out.println("["+(expect == res)+"]expect:" + expect + " res:" + res);
     }
 
 
+    //3.Union Find
+    //Runtime: 32ms 98%; Memory: 62.3MB 90%
+    //Time: O(N * LogN); Space: O(N);
+    public int numberOfGoodPaths(int[] vals, int[][] edges) {
+        Arrays.sort(edges, (a, b) -> {
+            int tmp = Math.max(vals[a[0]], vals[a[1]]) - Math.max(vals[b[0]], vals[b[1]]);
+            return tmp != 0 ? tmp : Math.min(vals[a[0]], vals[a[1]]) - Math.min(vals[a[0]], vals[a[1]]);
+        });
+
+        int res = vals.length;
+        UnionFind3 uf = new UnionFind3(vals.length);
+        for(int[] edge: edges)
+            res += uf.union(edge[0], edge[1], vals);
+        return res;
+    }
+
+    class UnionFind3 {
+        private int[] data;
+        private int[] count;
+
+        public UnionFind3(int n){
+            data = new int[n];
+            count = new int[n];
+            for (int i = 0; i <n; i++){
+                data[i] = i;
+                count[i] = 1;
+            }
+        }
+        public int find(int x){
+            if (data[x] == x) return x;
+            return data[x] = find(data[x]);
+        }
+
+        public int union(int x, int y, int[] vals){
+            int rootX = find(x);
+            int rootY = find(y);
+            if (rootX == rootY) return 0;
+
+            int res = 0;
+            if (vals[rootX] == vals[rootY]) {
+                res = count[rootX] * count[rootY];
+
+                count[rootX] += count[rootY];
+                count[rootY] = 0;
+            }
+
+            if (vals[rootX] < vals[rootY])
+                data[rootX] = rootY;
+            else
+                data[rootY] = rootX;
+
+            return res;
+        }
+    }
+
+
+    //2.UnionFind
+    //Runtime: 101ms 82%; Memory: 61.9MB 93%
+    //Time: O(N * LogN); Space: O(N);
+    public int numberOfGoodPaths_2(int[] vals, int[][] edges) {
+        int n = vals.length;
+        List<Integer>[] graph = new List[n];
+        Map<Integer, List<Integer>> valTreeMap = new TreeMap<>();
+        for (int i = 0; i < n; i++) {
+            valTreeMap.computeIfAbsent(vals[i], k-> new ArrayList<>()).add(i);
+            graph[i] = new ArrayList<>();
+        }
+
+        for (int[] edge : edges){
+            if (vals[edge[0]] >= vals[edge[1]])
+                graph[edge[0]].add(edge[1]);
+            if (vals[edge[1]] >= vals[edge[0]])
+                graph[edge[1]].add(edge[0]);
+        }
+
+        int res = 0;
+        //Time: O(N); Space: O(N)
+        UnionFind2 uf = new UnionFind2(vals.length);
+
+        //from the smallest value to the largest one
+        for (Map.Entry<Integer, List<Integer>> entry : valTreeMap.entrySet()) {
+            List<Integer> nodeSet = entry.getValue();
+            for (int node : nodeSet)
+                uf.setCount(node, 1);
+
+            for (int node : nodeSet)
+                for (int neighbour : graph[node])
+                    uf.union(node, neighbour);
+
+            Set<Integer> rootSet = new HashSet<>();
+            for (int node : nodeSet)
+                rootSet.add(uf.find(node));
+
+            for (int node : rootSet) {
+                res += uf.getCount(node) * (uf.getCount(node) + 1) / 2;
+                uf.setCount(node, 0);
+            }
+        }
+        return res;
+    }
+
+    class UnionFind2 {
+        private int[] data;
+        private int[] rank;
+        private int[] count;
+
+        public UnionFind2(int n){
+            data = new int[n];
+            rank = new int[n];
+            count = new int[n];
+            for (int i = 0; i <n; i++){
+                data[i] = i;
+                rank[i] = 1;
+            }
+        }
+        public int find(int x){
+            if (data[x] == x) return x;
+            return data[x] = find(data[x]);
+        }
+
+        public void union(int x, int y){
+            int rootX = find(x);
+            int rootY = find(y);
+            if (rootX == rootY) return;
+
+            if (rank[rootX] < rank[rootY]){
+                data[rootX] = rootY;
+
+                count[rootY] += count[rootX];
+                count[rootX] = 0;
+            }else{
+                data[rootY] = rootX;
+                if (rank[rootX] == rank[rootY]) rank[rootX]++;
+
+                count[rootX] += count[rootY];
+                count[rootY] = 0;
+            }
+        }
+
+        public void setCount(int x, int val){
+            count[x] = val;
+        }
+        public int getCount(int x){
+            return count[x];
+        }
+    }
+
+
+
+    //1.DFS
+    //TLE
+    //Time: O(N * N); Space: O(N)
+    public int numberOfGoodPaths_1(int[] vals, int[][] edges) {
+        int n = vals.length;
+        List<Integer>[] graph = new List[n];
+        for (int i = 0; i < n; i++)
+            graph[i] = new ArrayList<>();
+        for (int[] edge : edges){
+            graph[edge[0]].add(edge[1]);
+            graph[edge[1]].add(edge[0]);
+        }
+
+        int[] seen = new int[n];
+        int[] counter = new int[n];
+        for (int i = 0; i < vals.length; i++) {
+            if (seen[i] == 1) continue;
+            if (counter[i] > 0) continue;
+            helper_dfs(vals, graph, i, -1, counter, i, seen);
+        }
+
+        int res = 0;
+        for (int i = 0; i < n; i++) {
+            int count = counter[i];
+            res += count * (count + 1) / 2;
+        }
+        return res;
+    }
+
+    //Time: O(N); Space: O(N)
+    private void helper_dfs(int[] vals, List<Integer>[] graph, int node, int parent,
+                            int[] counter, int rootNode, int[] seen) {
+        if (vals[rootNode] == vals[node]) {
+            counter[rootNode]++;
+            seen[node] = 1;
+        }
+
+        for (int neighbour : graph[node]) {
+            if (neighbour == parent || vals[neighbour] > vals[rootNode]) continue;
+            helper_dfs(vals, graph, neighbour, node, counter, rootNode, seen);
+        }
+    }
+
+
+    /////////////before 2022.01.15/////////////////////////////
     //Runtime: 113 ms, faster than 100.00% of Java online submissions for Number of Good Paths.
     //Memory Usage: 60.4 MB, less than 100.00% of Java online submissions for Number of Good Paths.
     //Union Find
-    public int numberOfGoodPaths(int[] vals, int[][] edges) {
+    public int numberOfGoodPaths_01(int[] vals, int[][] edges) {
         //Space: O(N + N)
         List<List<Integer>> adjList = new ArrayList<>(); //graph 邻接表
         Map<Integer, List<Integer>> valueIdxMap = new TreeMap<>(); //value：nodeList
@@ -174,14 +364,6 @@ public class N2421HNumberofGoodPaths {
             if (node == data[node]) return node;
             return data[node] = find(data[node]);
         }
-//        private int find(int node){
-//            while (data[node] != node) {
-//                // Path compression.
-//                data[node] = data[data[node]];
-//                node = data[node];
-//            }
-//            return node;
-//        }
 
         public int unionNeighbors(int node1, List<Integer> neighbors) {
             int root1 = find(node1);
@@ -209,134 +391,6 @@ public class N2421HNumberofGoodPaths {
             return root1;
         }
     }
-
-
-
-
-
-
-
-
-
-    //TLE
-    public int numberOfGoodPaths_2(int[] vals, int[][] edges) {
-        if (edges.length == 0) return vals.length;
-
-        Map<Integer, Set<Integer>> graph = new HashMap<>();
-        for (int[] node : edges){
-            Set<Integer> a = graph.getOrDefault(node[0], new HashSet<>());
-            graph.put(node[0], a);
-            a.add(node[1]);
-
-            Set<Integer> b = graph.getOrDefault(node[1], new HashSet<>());
-            graph.put(node[1], b);
-            b.add(node[0]);
-        }
-
-        Set<Integer> seen = new HashSet<>();
-        int res = 0;
-        for (int i = 0; i < vals.length; i++) {
-            if (!seen.contains(i))
-                res += helper2(vals, graph, seen, i);
-        }
-        return res;
-    }
-
-    private int helper2(int[] vals, Map<Integer, Set<Integer>> graph, Set<Integer> seen, int startNode){
-
-        Set<Integer> set = new HashSet<>();
-        set.add(startNode);
-        int count = 1;
-        int res = 1;
-
-        Deque<Integer> stack = new ArrayDeque();
-        stack.add(startNode);
-
-        while (!stack.isEmpty()){
-            int node = stack.pop();
-            //if (!graph.containsKey(node)) continue;
-            Set<Integer> neighbours = graph.get(node);
-            for (int neighbour: neighbours) {
-                if (vals[neighbour] <= vals[startNode] && set.add(neighbour)) {
-                    if (vals[neighbour] == vals[startNode]) {
-                        res += ++count;
-                        seen.add(neighbour);
-                    }
-                    stack.add(neighbour);
-                }
-            }
-        }
-        return res;
-    }
-
-    //TLE
-    public int numberOfGoodPaths_1(int[] vals, int[][] edges) {
-        if (edges.length == 0) return vals.length;
-
-        Map<Integer, Set<Integer>> graph = new HashMap<>();
-        for (int[] node : edges){
-            Set<Integer> a = graph.getOrDefault(node[0], new HashSet<>());
-            graph.put(node[0],a);
-            a.add(node[1]);
-
-            Set<Integer> b = graph.getOrDefault(node[1], new HashSet<>());
-            graph.put(node[1],b);
-            b.add(node[0]);
-        }
-
-        int res = 0;
-        Set<Integer> seen = new HashSet<>();
-        for (int i = vals.length - 1; i >= 0; i--) {
-            seen.add(i);
-            res += helper(graph, vals, i, i, seen);
-        }
-        return res;
-    }
-
-    private int helper(Map<Integer, Set<Integer>> graph, int[] vals, int startNode, int node, Set<Integer> seen){
-        int res = 0;
-        if (vals[startNode] == vals[node]) res++;
-
-        if (graph.containsKey(node)){
-            Set<Integer> set = graph.get(node);
-            for (int n: set) {
-                if (vals[n] <= vals[startNode] && !seen.contains(n)){
-                    seen.add(n);
-                    res += helper(graph, vals, startNode, n, seen);
-                    seen.remove(n);
-                }
-            }
-        }
-        return res;
-    }
-
-
-//    private int helper(Map<Integer, Set<Integer>> graph, int[] vals, int beginNode, Set<Integer> seen){
-//        int res = 1;
-//        Set<Integer> currSeen = new HashSet<>();
-//
-//        Deque<Integer> stack = new ArrayDeque();
-//        stack.add(beginNode);
-//
-//        while (!stack.isEmpty()){
-//            int node = stack.pop();
-//            currSeen.add(node);
-//            if (graph.containsKey(node)){
-//
-//                Set<Integer> set = graph.get(node);
-//                for (int n: set){
-//                    if (vals[n] <= vals[beginNode]){
-//                        if (!currSeen.contains(n) && !seen.contains(n)) {
-//                            if (vals[n] == vals[beginNode]) res++;
-//                            stack.add(n);
-//                        }
-//                    }
-//                }
-//
-//            }
-//        }
-//        return res;
-//    }
 
 
 }
