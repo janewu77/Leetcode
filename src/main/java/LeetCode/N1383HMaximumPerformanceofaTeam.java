@@ -51,6 +51,7 @@ import static java.time.LocalTime.now;
 /**
  * H - [Time: 120+
  */
+//2542.Maximum Subsequence Score
 public class N1383HMaximumPerformanceofaTeam {
 
     public static void main(String[] args){
@@ -78,7 +79,7 @@ public class N1383HMaximumPerformanceofaTeam {
     //Runtime: 57 ms, faster than 90.91% of Java online submissions for Maximum Performance of a Team.
     //Memory Usage: 53.7 MB, less than 96.97% of Java online submissions for Maximum Performance of a Team.
     //Time: O(N + N * LogN + N * LogK); Space: O(N + LogN + K)
-    //Time: O(N * LogN + N * LogK); Space: O(LogN + K)
+    //Time: O(N * LogN + N * LogK); Space: O(N + K)
     public int maxPerformance(int n, int[] speed, int[] efficiency, int k) {
         int MODULO = 1_000_000_007;// + 7;
 

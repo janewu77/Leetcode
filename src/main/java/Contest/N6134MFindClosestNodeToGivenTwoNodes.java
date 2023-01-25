@@ -57,14 +57,18 @@ public class N6134MFindClosestNodeToGivenTwoNodes {
 
     public static void main(String[] args){
 
-        doRun(2, new int[]{1,2,-1}, 0,2);
-        doRun(2, new int[]{2,2,3,-1}, 0,1);
-        doRun(4, new int[]{4,3,0,5,3,-1}, 4,0);
-        doRun(0, new int[]{2,0,0}, 2,0);
+        doRun(1, new int[]{4,4,8,-1,9,8,4,4,1,1}, 5,6);
 
         doRun(3, new int[]{5,3,1,0,2,4,5}, 3,2);
+
+        doRun(4, new int[]{4,3,0,5,3,-1}, 4,0);
+
+        doRun(2, new int[]{1,2,-1}, 0,2);
+        doRun(2, new int[]{2,2,3,-1}, 0,1);
+
+        doRun(0, new int[]{2,0,0}, 2,0);
         doRun(-1, new int[]{5,4,5,4,3,6,-1}, 0,1);
-        doRun(1, new int[]{4,4,8,-1,9,8,4,4,1,1}, 5,6);
+
 
     }
 
@@ -73,8 +77,51 @@ public class N6134MFindClosestNodeToGivenTwoNodes {
         System.out.println("[" + (res == expected) + "]res:"+res+".expected:"+expected);
     }
 
+    //2023.1.25
+    //2.
+    //Runtime: 7ms 99%; Memory: 58MB 86%
     //Time: O(N); Space: O(N)
     public int closestMeetingNode(int[] edges, int node1, int node2) {
+        if (node1 == node2) return node2;
+
+        int[] path = new int[edges.length];
+        Arrays.fill(path, -1);
+        int step = 0;
+
+        //node1
+        while (node1 != -1) {
+            if (path[node1] >= 0) break; //cycle
+            path[node1] = step++;
+            node1 = edges[node1];
+        }
+
+        //node2
+        int res = edges.length, maxStep = Integer.MAX_VALUE;
+        step = 0;
+        while (node2 != -1) {
+            if (path[node2] == -2) break; //cycle
+
+            if (path[node2] >= 0) {
+                //the maximum between the distance (from node1 to that node, and from node2 to that node) is minimized
+                int currMax = Math.max(path[node2], step);
+                if (maxStep >= currMax){
+                    res = maxStep == currMax ? Math.min(res, node2) : node2;
+                    maxStep = currMax;
+                }
+            }
+            path[node2] = -2; //visited
+            node2 = edges[node2];
+            step++;
+        }
+        return res == edges.length ? -1 : res;
+    }
+
+
+
+    //1.Hashmap0
+    //Runtime: 58ms 40%; Memory: 62MB 67%
+    //Time: O(N); Space: O(N)
+    public int closestMeetingNode_1(int[] edges, int node1, int node2) {
         if (node1 == node2) return node2;
 
         //node1: path & step
