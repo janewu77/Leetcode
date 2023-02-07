@@ -54,8 +54,12 @@ public class N904MFruitIntoBaskets {
 
 
     public static void main(String[] args) {
+        int[] data;
+        data  = new int[]{1,2,3,2,2};
+        doRun(4, data);
 
-        int[] data  = new int[]{3,3,3,1,2,1,1,2,3,3,4};
+
+        data  = new int[]{3,3,3,1,2,1,1,2,3,3,4};
         doRun(5, data);
 
         data  = new int[]{1,0,3,4,3};
@@ -68,17 +72,21 @@ public class N904MFruitIntoBaskets {
         System.out.println("["+(expect == res)+"]expect:" + expect + " res:" + res);
     }
 
-    //网上看来的。同样是写死。 但写得更简洁、精炼
+
+    //4。
     public int totalFruit(int[] fruits) {
         int res = 0;
         int count = 0, count_second = 0;
         int first = 0, second = 0;
-        for (int fruit: fruits){
+        for (int fruit : fruits) {
             count = fruit == first || fruit == second ? count + 1 : count_second + 1;
-            count_second = fruit == second ? count_second + 1 : 1;
-            if (second != fruit) {
+
+            if (fruit == second) {
+                count_second = count_second + 1;
+            } else {
                 first = second;
                 second = fruit;
+                count_second = 1;
             }
             res = Math.max(res, count);
         }
@@ -86,9 +94,9 @@ public class N904MFruitIntoBaskets {
     }
 
 
-    //Runtime: 11 ms, faster than 83.99% of Java online submissions for Fruit Into Baskets.
-    //Memory Usage: 77.6 MB, less than 65.36% of Java online submissions for Fruit Into Baskets.
-    //纯为了性能. 写死了K=2. 扩展性并不好。
+    //3. array
+    //Runtime: 9 ms, 89%; Memory: 51.9MB 44%
+    //Time: O(N); Space: O(1)
     public int totalFruit_3(int[] fruits) {
         int res = 0;
         int left = 0, right = 0;
@@ -119,62 +127,56 @@ public class N904MFruitIntoBaskets {
             tmp[0] = fruits[right];
             tmp[1]++;
             res = Math.max(res, firstBasket[1] + secondBasket[1]);
-
         }
         return res;
     }
 
-    //Runtime: 58 ms, faster than 66.21% of Java online submissions for Fruit Into Baskets.
-    //Memory Usage: 51.5 MB, less than 94.19% of Java online submissions for Fruit Into Baskets.
-    //maxsize window
+
+
+    //2.slide window : maxsize window
+    //Runtime: 58 ms, 49%; Memory: 51.4MB 72%
+    //Time: O(N); Space:O(1)
     public int totalFruit_2(int[] fruits) {
         int left = 0, right = 0;
         int kSize = 2;
-
         Map<Integer, Integer> map = new HashMap<>();
 
-        for (right = 0; right < fruits.length; right++){
+        for (; right < fruits.length; right++){
             map.put(fruits[right], map.getOrDefault(fruits[right], 0) + 1);
-            //这里不用while的话，窗口将一直保持最大值。直到有新的最大值出现。最后只要 right - left 就能得到结果。
             if (map.size() > kSize) {
-                map.put(fruits[left], map.get(fruits[left]) - 1); //这里进行减， 相当于进一个减一个。这样就让window一直保持当前最大size
-                map.remove(fruits[left++], 0); //这个写法很简洁。
+                map.put(fruits[left], map.get(fruits[left]) - 1);
+                map.remove(fruits[left++], 0);
             }
         }
-
-        return right - left; //用窗口size即可。
+        return right - left;
     }
 
 
-    //性能不怎么好，如何改？
-    //Runtime: 70 ms, faster than 58.76% of Java online submissions for Fruit Into Baskets.
-    //Memory Usage: 102.8 MB, less than 53.29% of Java online submissions for Fruit Into Baskets.
-    //two pointer slide-window
-    //Time: O(N); Space:O(2)
+    //1.slide window : two pointer
+    //Runtime: 58 ms, 49%; Memory: 52MB 44%
+    //Time: O(N); Space:O(1)
     public int totalFruit_1(int[] fruits) {
         int res = 0, count = 0;
-        int left = 0, right = 0;
         int kSize = 2;
-
         Map<Integer, Integer> map = new HashMap<>();
 
-        for (right = 0; right < fruits.length; right++){
-
+        for (int left = 0, right = 0; right < fruits.length; right++){
             map.put(fruits[right], map.getOrDefault(fruits[right], 0) + 1);
             count++;
 
-            while (map.size() > kSize && left < right) {
-
-                int tmp =  map.get(fruits[left]) - 1;
-                if (tmp <= 0) map.remove(fruits[left]);
-                else map.put(fruits[left], tmp);
-
+            while (left < right && map.size() > kSize) {
+                int c =  map.get(fruits[left]) - 1;
+                map.put(fruits[left], c);
+                map.remove(fruits[left], 0);
+//                if (c <= 0) map.remove(fruits[left]);
+//                else map.put(fruits[left], c);
                 count--;
                 left++;
             }
             res = Math.max(res, count);
         }
-
         return res;
     }
+
+
 }
