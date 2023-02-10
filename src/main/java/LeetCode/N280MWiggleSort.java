@@ -73,9 +73,10 @@ public class N280MWiggleSort {
         }
     }
 
-    //Runtime: 1 ms, faster than 91.55% of Java online submissions for Wiggle Sort.
-    //Memory Usage: 49 MB, less than 66.21% of Java online submissions for Wiggle Sort.
+
     //逐位检查： 单小双大，不满足就互换
+    //2.compare
+    //Runtime: 0 ms, 100%; Memory: 42.5MB 98%
     //time: O(N); Space: O(1)
     public void wiggleSort(int[] nums) {
         for (int i = 0; i < nums.length - 1; i++) {
@@ -88,11 +89,9 @@ public class N280MWiggleSort {
         }
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////
-    //Runtime: 5 ms, faster than 24.10% of Java online submissions for Wiggle Sort.
-    //Memory Usage: 49.2 MB, less than 51.11% of Java online submissions for Wiggle Sort.
-    //sort + 第二位开始互换
-    //time: O(NlogN); Space: O(1)
+    //1.Sort
+    //Runtime: 3 ms, 40.7%; Memory: 43.1MB 56%
+    //time: O(NlogN); Space: O(logN)
     public void wiggleSort_1(int[] nums) {
         if (nums.length <= 1) return;
 
