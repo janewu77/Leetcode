@@ -1,12 +1,9 @@
 package Contest;
 
-
 import static java.time.LocalTime.now;
 
 
 public class C0806 {
-
-
 
      static public void main(String... args){
          System.out.println(now());
