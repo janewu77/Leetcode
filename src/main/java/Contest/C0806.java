@@ -13,8 +13,8 @@ public class C0806 {
         System.out.println("==================");
     }
 
-    //contest: 92  330 ; 97 331
-    //2547 1494 460 1908 1626 2565. 2564
+    //contest: 92  330 ; 97 331; 98 333
+    //2547 1494 460 1908 1626 2565. 2564 1259
     static private void doRun(long expect, int n) {
          //List<List<Integer>> keys = comm.convert2DArr2List(rooms);
 //        long res = new C0806().n1(n);
